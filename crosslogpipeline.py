@@ -1,4 +1,8 @@
-"""Class file used to define the cross log pipeline.
+"""
+File: crosslog/main.py
+Author: Danny Ray
+Date: 03/07/2026
+Description: This is the main module which controls the cross log analyzer tool.
 """
 from parsers.auto_detect import get_parser_for_file
 from config import CrossLogPipelineConfig
@@ -14,7 +18,7 @@ class CrossLogPipeline:
         self.config = config
     
     def run(self, files):
-        """Primary method to used to start the processing of ingested log files.
+        """Primary method used to start the processing of ingested log files.
 
         Args:
             files (List[Path]): Ingest files selected by the user.
