@@ -15,3 +15,10 @@ To parse multiple files:
 
 python crosslog.py sample-1.xml sample-2.xml sample-3.xml
 
+To parse a single directory:
+
+python crosslog.py sub_directory_1
+
+To parse a single directory recursively:
+
+python crosslog.py sub_directory_1 --recursive
