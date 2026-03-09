@@ -98,6 +98,21 @@ def get_parser_for_file(file_path: Path, forced_format: str="auto") -> None:
         
     raise ValueError(f"Could not determine the parser type for file: {file_path}")
 
+def forced_parser(forced_format:str) -> None:
+    parser_map = {
+        "rfc3164": RFC3164Parser,
+        "rfc5424": RFC5424Parser,
+        "evtx": EvtxParser,
+        "xml": WindowsXmlParser
+    } 
+    
+    parser_cls = parser_map.get(forced_format)
+    
+    if parser_cls is None:
+        raise ValueError(f"Unsupported forced format: {forced_format}")
+    
+    return parser_cls()
+
 def get_first_nonempty_line(file_path: str) -> str:
     """Function used to extract the first non-empty string line from the file.
 
