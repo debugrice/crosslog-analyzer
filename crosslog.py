@@ -9,7 +9,7 @@ import sys;
 from pathlib import Path
 from typing import Iterable, List
 from config import CrossLogPipelineConfig
-from crosslog import CrossLogPipeline
+from crosslogpipeline import CrossLogPipeline
 from ingest.file_loader import discover_input_files
 from models.run_result import RunResult
 from output.console import print_report
