@@ -5,7 +5,6 @@ Date: 03/08/2026
 Description: Functions used to print the report via the console.
 """
 from collections import Counter
-
 from models.run_result import RunResult
 
 def print_report(result: RunResult, report_mode: str = "summary") -> None:
