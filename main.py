@@ -1,0 +1,150 @@
+"""
+File: crosslog/main.py
+Author: Danny Ray
+Date: 03/07/2026
+Description: This is the main module which controls the cross log analyzer tool.
+"""
+import argparse;
+import sys;
+from pathlib import Path
+from typing import Iterable, List
+from config import CrossLogPipelineConfig
+from crosslog import CrossLogPipeline
+from ingest.file_loader import discover_input_files
+from models.run_result import RunResult
+from output.console import print_report
+
+def build_argparser() -> argparse.ArgumentParser:
+    """"
+    Builds the argument parser for the cross log parser.
+    
+    Returns:
+        argparse.ArgumentParser: buildin argparser with customized application settings.
+    """
+    p = argparse.ArgumentParser(prog="crosslog",
+                                description="Cross Platfrom log analyzer \
+                                    program for detecting cybersecurity events\
+                                    from user provided log files.")
+    # User can input single files or directories (if directory check the recursive option)
+    p.add_argument(
+        "inputs",
+        nargs="+",
+        help="One or more log files or directories containting log files."
+    )
+    # User can bypass the auto check and set the parser type
+    p.add_argument(
+        "--format",
+        choices=["auto","rfc3164","rfc5424", "evtx"],
+        default="auto",
+        help="Force a parser format, or use the default auto-detect."
+    )
+    # If user passes this option, then loop through all discovered directories
+    p.add_argument(
+        "--recursive",
+        action="store_true",
+        help="Recursively search directories for log files."
+    )
+    
+    # If user passes this optin, then the pipeline terminates when an error is detected.
+    p.add_argument(
+        "--exit",
+        default=False,
+        action="store_false",
+        help="Stop processing if an exception is detected."
+    )
+    # This option is for print the console report. Options are summary or full.
+    p.add_argument(
+        "--mode",
+        choices=["summary","full"],
+        default="summary",
+        help="Print console output as summary or full. Default=summary"
+    )
+    return p
+
+def validate_inputs(raw_inputs: List[str]) -> List[Path]:
+    """
+    Extracts the user input files into a list of Path objects.
+
+    Args:
+        raw_inputs (List[str]): list of raw strings that need to converted Path objects
+
+    Returns:
+        List[Path]: List of file system Path objects
+    """
+    paths = []
+    for p in raw_inputs:
+        paths.append(Path(p))
+    
+    # Check to see if all the input strings are valid.
+    missing = []
+    for p in paths:
+        if not p.exists():
+            missing.append(p)
+    # TODO: Verify the plan would be to stop on missing input.
+    if missing:
+        for path in missing:
+            print(f"[ERROR]: Input does not exist: {path}", file=sys.stderr)
+        sys.exit(1)
+    
+    return paths
+   
+def main() -> int:
+    """Main function for processing the log files. 
+    This will contain the pipline fascade class.
+
+    Args:
+        None
+
+    Returns:
+        int: Integer value for exiting the system.
+    """
+    args_parser = build_argparser()
+    args        = args_parser.parse_args(sys.argv)
+    
+    # If the user fails to provide the necessary input stop the application.
+    if len(sys.argv) == 1:
+        args_parser.print_help()
+        return 1
+    # Get the user provided input data file paths
+    input_paths = validate_inputs(args.inputs)
+    
+    # Initalize the configuration data class object
+    config = CrossLogPipelineConfig(
+        input_paths=input_paths,
+        input_format=args.format,
+        recursive=args.recursive,
+        fail_fast=args.exit,
+        report_mode=args.mode,
+    )
+     
+    try:
+        # Identify the the files that must be added to the pipeline 
+        files = discover_input_files(
+            input_paths,
+            recursive=args.recursive
+        )
+        # Stop the application if we don't have any input.
+        if not files:
+            print("[ERROR]: No Input log files found.", file=sys.stderr)
+            return 1
+        
+        # Build the pipelines
+        pipeline = CrossLogPipeline(config=config)
+        
+        # Results from the pipeline
+        results = pipeline.run(files=files)
+        
+        # Display the report summary or full to the user
+        print_report(results, report_mode=config.report_mode)
+        
+        return 0
+    
+    except KeyboardInterrupt:
+        print("Program interrupted by user. ")
+        return 130
+    except Exception as exc:
+        print(f"[FATAL] {exc}", file=sys.stderr)
+        return -1
+
+if __name__ == "__main__":
+    sys.exit(main())

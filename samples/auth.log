@@ -1,0 +1,8 @@
+Nov 17 15:08:39 localhost sshd[621893]: Failed password for nemo from 192.168.0.7 port 8132 ssh2
+Feb 18 09:19:12 myserver sshd[4792]: Failed password for x from 20.20.20.20 port 2158 ssh2
+Feb 18 09:19:07 myserver sshd[4792]: pam_unix(sshd:auth): authentication failure; logname= uid=0 effective uid=0 eup=0 ssl=opn msg='authentication failure; logname= uid=0 effective uid=0 eup=0 ssl=opn'
+Feb 18 12:21:32 myserver su[3484]: pam_unix(su:session): session open for user root
+Mar 04 10:20:15 blackhat sshd[12345]: pam_faillock(sshd:auth): user carter is locked out for 1800 seconds
+Mar 04 10:20:15 blackhat sshd[12345]: pam_faillock(sshd:auth): user carter is locked out from 192.168.1.100
+Mar 04 10:20:17 blackhat sshd[12345]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.1.100 user=carter
+
