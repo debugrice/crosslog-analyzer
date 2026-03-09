@@ -20,7 +20,7 @@ def write_summary_report(result: RunResult, output_path: Path) -> None:
     lines: list[str] = []
 
     # Summary report 
-    #TODO could be improved. We would both the console and summary to be the same
+    #TODO could be improved. Could the console and summary writer use the same standard ouput
     lines.append("=== CrossLog Summary Report ===")
     lines.append(f"Files processed:        {result.files_processed}")
     lines.append(f"Normalized events:      {result.total_events()}")
