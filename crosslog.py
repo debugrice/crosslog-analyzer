@@ -13,6 +13,8 @@ from crosslogpipeline import CrossLogPipeline
 from ingest.file_loader import discover_input_files
 from models.run_result import RunResult
 from output.console import print_report
+from output.text_report import write_summary_report
+from output.findings_csv_report import write_findings_csv
 
 def build_argparser() -> argparse.ArgumentParser:
     """"
@@ -47,7 +49,7 @@ def build_argparser() -> argparse.ArgumentParser:
     
     # If user passes this optin, then the pipeline terminates when an error is detected.
     p.add_argument(
-        "--exit",
+        "--fail-fast",
         default=False,
         action="store_false",
         help="Stop processing if an exception is detected."
@@ -59,6 +61,17 @@ def build_argparser() -> argparse.ArgumentParser:
         default="summary",
         help="Print console output as summary or full. Default=summary"
     )
+    p.add_argument(
+        "--summary-out",
+        type=Path,
+        help="Write the report summary to a text file."
+    )
+    p.add_argument(
+        "--findings-csv",
+        type=Path,
+        help="Write the findings to a CSV file."
+    )
+    
     return p
 
 def validate_inputs(raw_inputs: List[str]) -> List[Path]:
@@ -113,8 +126,10 @@ def main() -> int:
         input_paths=input_paths,
         input_format=args.format,
         recursive=args.recursive,
-        fail_fast=args.exit,
+        fail_fast=args.fail_fast,
         report_mode=args.mode,
+        summary_output_path=args.summary_out,
+        findings_csv_path=args.findings_csv,
     )
      
     try:
@@ -136,6 +151,14 @@ def main() -> int:
         
         # Display the report summary or full to the user
         print_report(results, report_mode=config.report_mode)
+        
+        # Update to print the summary to a file 
+        if config.summary_output_path:
+            write_summary_report(result=results,
+                                 output_path=config.summary_output_path)
+        if config.findings_csv_path:
+            write_findings_csv(result=results,
+                               output_path=config.findings_csv_path)
         
         return 0
     
