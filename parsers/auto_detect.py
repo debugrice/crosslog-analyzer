@@ -99,18 +99,33 @@ def get_parser_for_file(file_path: Path, forced_format: str="auto") -> None:
     raise ValueError(f"Could not determine the parser type for file: {file_path}")
 
 def forced_parser(forced_format:str) -> None:
+    """Helper function that enables the user to force a parser type.
+
+    Args:
+        forced_format (str): Parser user options.
+
+    Raises:
+        ValueError: Throws an error if the parser type is unknown.
+
+    Returns:
+        ParserObject: Dynamic parser type if discovered. 
+    """
+    # List of available parsers
     parser_map = {
         "rfc3164": RFC3164Parser,
         "rfc5424": RFC5424Parser,
         "evtx": EvtxParser,
-        "xml": WindowsXmlParser
+        "xml": WindowsXmlParser,
     } 
     
+    # Use the dictionary map to extract the type of parser
     parser_cls = parser_map.get(forced_format)
     
+    # Ensure the parser was discovered
     if parser_cls is None:
         raise ValueError(f"Unsupported forced format: {forced_format}")
     
+    # Call the constructor and return
     return parser_cls()
 
 def get_first_nonempty_line(file_path: str) -> str:
