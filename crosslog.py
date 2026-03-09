@@ -34,7 +34,7 @@ def build_argparser() -> argparse.ArgumentParser:
     # User can bypass the auto check and set the parser type
     p.add_argument(
         "--format",
-        choices=["auto","rfc3164","rfc5424", "evtx"],
+        choices=["auto","rfc3164","rfc5424", "evtx", "xml"],
         default="auto",
         help="Force a parser format, or use the default auto-detect."
     )
