@@ -13,4 +13,5 @@ class CrossLogPipelineConfig:
     recursive: bool = False
     report_mode: str = "summary"
     fail_fast: bool = False
-    output_path: Optional[Path] = None
+    summary_output_path: Optional[Path] = None
+    findings_csv_path: Optional[Path] = None
