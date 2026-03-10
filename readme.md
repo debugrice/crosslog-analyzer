@@ -7,6 +7,14 @@ pip install -r requirements.txt
 To print the help menu: 
 
 python crosslog.py --help
+  usage: crosslog [-h] [--format {auto,rfc3164,rfc5424,evtx,xml}] [--recursive] [--fail-fast] [--mode {summary,full}] [--summary-out SUMMARY_OUT] [--findings-csv FINDINGS_CSV] inputs [inputs ...]
+
+Cross Platfrom log analyzer program for detecting cybersecurity events from user provided log files.
+
+positional arguments:
+  inputs                One or more log files or directories containting log files.
+
+options:
   -h, --help            show this help message and exit
   --format {auto,rfc3164,rfc5424,evtx,xml}
                         Force a parser format, or use the default auto-detect.
