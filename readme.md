@@ -3,8 +3,9 @@ This project implements the CrossLog Analyzer, a tool for parsing syslog and Win
 Install the required packages:
 pip install -r requirements.txt
 
-To print the help menu: 
 ```text
+To print the help menu: 
+
 python crosslog.py --help
   -h, --help            show this help message and exit
   --format {auto,rfc3164,rfc5424,evtx,xml}
@@ -17,7 +18,7 @@ python crosslog.py --help
                         Write the report summary to a text file.
   --findings-csv FINDINGS_CSV
                         Write the findings to a CSV file.
-```text
+
 To parse a single file:
 
 python crosslog.py sample.xml
