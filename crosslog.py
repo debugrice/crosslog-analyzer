@@ -24,9 +24,10 @@ def build_argparser() -> argparse.ArgumentParser:
         argparse.ArgumentParser: buildin argparser with customized application settings.
     """
     p = argparse.ArgumentParser(prog="crosslog",
-                                description="Cross Platfrom log analyzer \
-                                    program for detecting cybersecurity events\
-                                    from user provided log files.")
+                                description=(
+                                    "Cross Platfrom log analyzer program for detecting "
+                                    "cybersecurity events from user provided log files.")
+                                )
     # User can input single files or directories (if directory check the recursive option)
     p.add_argument(
         "inputs",
