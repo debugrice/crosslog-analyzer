@@ -153,10 +153,11 @@ def main() -> int:
         # Display the report summary or full to the user
         print_report(results, report_mode=config.report_mode)
         
-        # Update to print the summary to a file 
+        # If user selected, print the summary to a file 
         if config.summary_output_path:
             write_summary_report(result=results,
                                  output_path=config.summary_output_path)
+        # If user selected, print a CSV file
         if config.findings_csv_path:
             write_findings_csv(result=results,
                                output_path=config.findings_csv_path)
