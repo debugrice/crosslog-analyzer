@@ -1,5 +1,4 @@
-"""Class file used to define the data class for the user configuration items.
-"""
+
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Optional
