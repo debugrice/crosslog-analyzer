@@ -33,7 +33,7 @@ def enrich_auth_fields(parsed_event, fields):
         fields["source_port"] = int(ssh_match.group("port"))
         fields["auth_service"] = "sshd"
 
-    # Checi if this is a pam_faillock event
+    # Check if this is a pam_faillock event
     faillock_match = PAM_FAILLOCK_RE.search(message)
     if faillock_match:
         fields["username"] = faillock_match.group("username")
