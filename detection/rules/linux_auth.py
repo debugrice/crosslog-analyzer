@@ -8,12 +8,13 @@ def detect_ssh_failed_password(event):
         event (ParsedEvent): Normalized event message.
 
     Returns:
-        Finding: Finding extracted from the normalized event message.
+        Finding: Finding object extracted from the normalized event message.
     """
     # Program check if its from the ssh daemon
     if event.program != "sshd":
         return None
-
+    
+    # String lower case the message
     msg = event.message.lower()
 
     # Message must have the phrase failed password.
@@ -45,6 +46,7 @@ def detect_ssh_success(event):
     if event.program != "sshd":
         return None
 
+    # String lower case the message
     msg = event.message.lower()
 
     # checking for specific phrases in the msg.
