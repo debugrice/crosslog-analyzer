@@ -1,17 +1,14 @@
-"""
-File: crosslog/detection/engine.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Functions used to process all detection rules.
-"""
+
 from detection.rules.linux_auth import RULES as LINUX_AUTH_RULES
 from detection.rules.windows_auth import RULES as WINDOWS_AUTH_RULES
+from detection.rules.windows_iam import RULES as WINDOWS_IAM_RULES
 
 # List of rules to process
 # TODO Add more rules to this section.
 RULES = (
     LINUX_AUTH_RULES
     + WINDOWS_AUTH_RULES
+    + WINDOWS_IAM_RULES
 )
 
 def detect(event):

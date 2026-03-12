@@ -1,9 +1,4 @@
-"""
-File: crosslog/parsers/rfc3164.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: RFC3164 Parser used to extract BSD style syslog files.
-"""
+
 import re
 
 from models.parsed_event import ParsedEvent

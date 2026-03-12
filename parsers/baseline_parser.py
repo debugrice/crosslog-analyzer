@@ -1,9 +1,4 @@
-"""
-File: crosslog/parsers/baseline_parser.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Parent parser class for syslogs used to extract the lines for a file.
-"""
+
 from pathlib import Path
 from models.parsed_event import ParserErrorEvent
 from abc import ABC, abstractmethod

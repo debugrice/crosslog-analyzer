@@ -1,9 +1,4 @@
-"""
-File: crosslog/normalizer/normalize.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Primary normalizing function file.
-"""
+
 from models.event import Event
 from models.parsed_event import ParsedEvent
 from normalizer.time import normalize_timestamp

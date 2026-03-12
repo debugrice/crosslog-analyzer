@@ -1,9 +1,4 @@
-"""
-File: crosslog/models/parsed_event.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Data class for storing the parsed event from the log files.
-"""
+
 from dataclasses import dataclass, field
 from typing import Any
 

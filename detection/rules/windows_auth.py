@@ -1,9 +1,4 @@
-"""
-File: crosslog/detection/rules/windows_auth.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Functions for processing Windows authentication findings.
-"""
+
 from models.finding import Finding
 
 def detect_windows_logon_success(event):

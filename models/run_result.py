@@ -1,9 +1,4 @@
-"""
-File: crosslog/models/run_result.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Data class for storing the results from the run.
-"""
+
 from dataclasses import dataclass, field
 from typing import Any
 

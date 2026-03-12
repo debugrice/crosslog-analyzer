@@ -1,9 +1,4 @@
-"""
-File: crosslog/normalizer/time.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Helper functions to update and modify the timestamp.
-"""
+
 import re
 from datetime import datetime
 from zoneinfo import ZoneInfo

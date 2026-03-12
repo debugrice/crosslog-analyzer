@@ -1,9 +1,4 @@
-"""
-File: crosslog/detection/rules/linux_auth.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Functions for processing linux authentication findings.
-"""
+
 from models.finding import Finding
 
 def detect_ssh_failed_password(event):

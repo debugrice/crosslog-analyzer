@@ -1,9 +1,4 @@
-"""
-File: crosslog/parsers/rfc5424.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: RFC5424 Parser used to extract standardized syslog protocol.
-"""
+
 import re
 
 from models.parsed_event import ParsedEvent
@@ -38,13 +33,17 @@ class RFC5424Parser(BaseLineParser):
         # Reference call to the syslog-rfc5424-parser import.
         msg = SyslogMessage.parse(line)
 
+        # Properly formatted RFC 5424 should have something in the fields
+        # TODO Probably need to check these varaibles to ensure these are not None
         facility = msg.facility
         severity = msg.severity
 
+        # Basic pid identifier for the process
         pid = getattr(msg, "procid", None)
         if isinstance(pid, str) and pid.isdigit():
             pid = int(pid)
 
+        # This field is not needed and may not be present
         structured_data = getattr(msg, "structured_data", None)
 
         return ParsedEvent(

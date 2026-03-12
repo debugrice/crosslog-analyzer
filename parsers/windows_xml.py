@@ -1,9 +1,4 @@
-"""
-File: crosslog/parsers/windows_xml.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Windows XML Parser used to parse Windows XML event logs.
-"""
+
 from pathlib import Path
 import xml.etree.ElementTree as ET
 

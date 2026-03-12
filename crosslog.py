@@ -1,9 +1,4 @@
-"""
-File: crosslog/main.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: This is the main module which controls the cross log analyzer tool.
-"""
+
 import argparse;
 import sys;
 from pathlib import Path

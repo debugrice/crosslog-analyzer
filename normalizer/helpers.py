@@ -1,9 +1,4 @@
-"""
-File: crosslog/normalizer/helpers.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Helper functions for cleaning up the different event fields.
-"""
+
 def normalize_host(host: str) -> str:
     """Function used to reformat strings.
     

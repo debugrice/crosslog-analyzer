@@ -1,9 +1,4 @@
-"""
-File: crosslog/ingest/file_loader.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Functions used to load the user input.
-"""
+
 from pathlib import Path
 from typing import Iterable, List
 

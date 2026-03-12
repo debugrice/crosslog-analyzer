@@ -1,9 +1,4 @@
-"""
-File: crosslog/parsers/windows_evtx.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Windows EVTX Parser used to parse Windows binary event logs.
-"""
+
 from pathlib import Path
 from evtx import PyEvtxParser
 from models.parsed_event import ParsedEvent, ParserErrorEvent

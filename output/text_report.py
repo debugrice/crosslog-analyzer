@@ -1,9 +1,4 @@
-"""
-File: crosslog/output/text_report.py
-Author: Danny Ray
-Date: 03/09/2026
-Description: Functions for printing summary report to a file.
-"""
+
 
 from collections import Counter
 from models.run_result import RunResult

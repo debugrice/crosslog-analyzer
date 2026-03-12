@@ -1,9 +1,4 @@
-"""
-File: crosslog/models/event.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Data class used to store the normalized event message.
-"""
+
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -11,6 +6,7 @@ from typing import Any
 class Event:
     """
     Data class for the Normalized Event message.
+    
     """
     timestamp: str | None
     host: str | None

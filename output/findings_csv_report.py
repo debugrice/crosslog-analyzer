@@ -1,9 +1,4 @@
-"""
-File: crosslog/output/findings_csv.py
-Author: Danny Ray
-Date: 03/09/2026
-Description: Functions for printing the findings to a csv file.
-"""
+
 import csv
 from collections import Counter
 from models.run_result import RunResult

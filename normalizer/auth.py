@@ -1,9 +1,4 @@
-"""
-File: crosslog/normalizer/auth.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Functions used to help extract syslog auth failures.
-"""
+
 import re
 
 # Regex matching filter for sshd failed login

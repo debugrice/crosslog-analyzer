@@ -1,9 +1,4 @@
-"""
-File: crosslog/output/console.py
-Author: Danny Ray
-Date: 03/08/2026
-Description: Functions used to print the report via the console.
-"""
+
 from collections import Counter
 from models.run_result import RunResult
 

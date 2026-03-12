@@ -1,9 +1,4 @@
-"""
-File: crosslog/main.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: This is the main module which controls the cross log analyzer tool.
-"""
+
 from parsers.auto_detect import get_parser_for_file
 from config import CrossLogPipelineConfig
 from models.run_result import RunResult
