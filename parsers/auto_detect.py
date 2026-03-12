@@ -1,9 +1,4 @@
-"""
-File: crosslog/parsers/auto_detect.py
-Author: Danny Ray
-Date: 03/07/2026
-Description: Helper module used to identify the correct file parser.
-"""
+
 import re
 from pathlib import Path
 from parsers.windows_evtx import EvtxParser
@@ -11,8 +6,9 @@ from parsers.windows_xml import WindowsXmlParser
 from parsers.rfc3164 import RFC3164Parser
 from parsers.rfc5424 import RFC5424Parser
 
-RFC5424_RE = re.compile(r"^<\d{1,3}>[1-9]\d{0,2}\s")
+# Regex string object for identifying RFC 3164 and RFC 5424
 RFC3164_RE = re.compile(r"^(<\d{1,3}>)?[A-Z][a-z]{2}\s+\d{1,2}\s\d{2}:\d{2}:\d{2}\s")
+RFC5424_RE = re.compile(r"^<\d{1,3}>[1-9]\d{0,2}\s")
 
 
 def check_for_rfc5424(line: str) -> bool:
@@ -47,7 +43,9 @@ def check_for_windows_event_xml(file_path):
         bool: True if the XML file matches Windows XML Events or False if it does not.
     """
     try:
+        # Open the file read only
         with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+            # Basically check the first few lines to the xml schema
             for _ in range(20):
                 line = f.readline()
                 if not line:
@@ -57,6 +55,7 @@ def check_for_windows_event_xml(file_path):
                 if not text:
                     continue
 
+                # TODO This could be improved for better XML schema matching
                 if "<Event " in text or "<Events>" in text or 'http://schemas.microsoft.com/win/2004/08/events/event' in text:
                     return True
     except OSError:
