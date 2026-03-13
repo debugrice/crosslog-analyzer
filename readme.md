@@ -1,3 +1,9 @@
+<h1 align="center">CrossLog Analyzer</h1>
+
+<p align="center">
+Lightweight cross-platform security log analysis
+</p>
+
 This project implements the CrossLog Analyzer, a tool for parsing syslog and Windows Event Logs. It supports RFC 3164 and RFC 5424 syslog formats, as well as Windows EVTX and XML event log files.
 
 Install the required packages:
