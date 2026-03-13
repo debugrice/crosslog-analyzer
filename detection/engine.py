@@ -23,6 +23,7 @@ def detect(event):
     findings = []
 
     # List of rules to loop through and evaluate the event against.
+    # TODO Atomic rules need to be loaded via YAML files.
     for rule in RULES:
         finding = rule(event)
         if finding is not None:
