@@ -7,6 +7,7 @@ from parsers.rfc3164 import RFC3164Parser
 from parsers.rfc5424 import RFC5424Parser
 
 # Regex string object for identifying RFC 3164 and RFC 5424
+# TODO Additional text based parsers should have matching patterns
 RFC3164_RE = re.compile(r"^(<\d{1,3}>)?[A-Z][a-z]{2}\s+\d{1,2}\s\d{2}:\d{2}:\d{2}\s")
 RFC5424_RE = re.compile(r"^<\d{1,3}>[1-9]\d{0,2}\s")
 
@@ -45,7 +46,7 @@ def check_for_windows_event_xml(file_path):
     try:
         # Open the file read only
         with open(file_path, "r", encoding="utf-8", errors="replace") as f:
-            # Basically check the first few lines to the xml schema
+            # Basically check the first few lines for the xml schema
             for _ in range(20):
                 line = f.readline()
                 if not line:
@@ -110,12 +111,13 @@ def forced_parser(forced_format:str) -> None:
         ParserObject: Dynamic parser type if discovered. 
     """
     # List of available parsers
+    # TODO Update as new parsers are added
     parser_map = {
         "rfc3164": RFC3164Parser,
         "rfc5424": RFC5424Parser,
         "evtx": EvtxParser,
         "xml": WindowsXmlParser,
-    } 
+    }
     
     # Use the dictionary map to extract the type of parser
     parser_cls = parser_map.get(forced_format)
