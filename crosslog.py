@@ -42,7 +42,6 @@ def build_argparser() -> argparse.ArgumentParser:
         action="store_true",
         help="Recursively search directories for log files."
     )
-    
     # If user passes this optin, then the pipeline terminates when an error is detected.
     p.add_argument(
         "--fail-fast",
@@ -57,11 +56,13 @@ def build_argparser() -> argparse.ArgumentParser:
         default="summary",
         help="Print console output as summary or full. Default=summary"
     )
+    # This option allows the user write the summary report to a file.
     p.add_argument(
         "--summary-out",
         type=Path,
         help="Write the report summary to a text file."
     )
+    # This option allows the user to write the detail findings to a CSV file.
     p.add_argument(
         "--findings-csv",
         type=Path,
