@@ -23,26 +23,26 @@ def build_argparser() -> argparse.ArgumentParser:
                                     "Cross Platfrom log analyzer program for detecting "
                                     "cybersecurity events from user provided log files.")
                                 )
-    # User can input single files or directories (if directory check the recursive option)
+    # User can input single files or directories (if directory check the recursive option).
     p.add_argument(
         "inputs",
         nargs="+",
         help="One or more log files or directories containting log files."
     )
-    # User can bypass the auto check and set the parser type
+    # User can bypass the auto check and set the parser type.
     p.add_argument(
         "--format",
         choices=["auto","rfc3164","rfc5424", "evtx", "xml"],
         default="auto",
         help="Force a parser format, or use the default auto-detect."
     )
-    # If user passes this option, then loop through all discovered directories
+    # If user passes this option, then loop through all discovered directories.
     p.add_argument(
         "--recursive",
         action="store_true",
         help="Recursively search directories for log files."
     )
-    # If user passes this optin, then the pipeline terminates when an error is detected.
+    # If user passes this option, then the pipeline terminates when an error is detected.
     p.add_argument(
         "--fail-fast",
         default=False,
@@ -115,10 +115,10 @@ def main() -> int:
     if len(sys.argv) == 1:
         args_parser.print_help()
         return 1
-    # Get the user provided input data file paths
+    # Get the user provided input data file paths.
     input_paths = validate_inputs(args.inputs)
     
-    # Initalize the configuration data class object
+    # Initalize the configuration data class object.
     config = CrossLogPipelineConfig(
         input_paths=input_paths,
         input_format=args.format,
@@ -130,7 +130,7 @@ def main() -> int:
     )
      
     try:
-        # Identify the the files that must be added to the pipeline 
+        # Identify the the files that must be added to the pipeline, 
         files = discover_input_files(
             input_paths,
             recursive=args.recursive
@@ -140,7 +140,7 @@ def main() -> int:
             print("[ERROR]: No Input log files found.", file=sys.stderr)
             return 1
         
-        # Build the pipelines
+        # Build the pipeline
         pipeline = CrossLogPipeline(config=config)
         
         # Results from the pipeline
