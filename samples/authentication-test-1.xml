@@ -1,0 +1,48 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Microsoft-Windows-Security-Auditing" Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}" />
+    <EventID>4624</EventID>
+    <Version>0</Version>
+    <Level>0</Level>
+    <Task>12544</Task>
+    <Opcode>0</Opcode>
+    <Keywords>0x8020000000000000</Keywords>
+    <TimeCreated SystemTime="2025-03-07T22:45:00.123456700Z" />
+    <EventRecordID>12345678</EventRecordID>
+    <Correlation />
+    <Execution ProcessID="1234" ThreadID="5678" />
+    <Channel>Security</Channel>
+    <Computer>WORKSTATION1.domain.com</Computer>
+    <Security />
+  </System>
+  <EventData>
+    <Data Name="SubjectUserSid">S-1-5-18</Data>
+    <Data Name="SubjectUserName">SYSTEM</Data>
+    <Data Name="SubjectDomainName">NT AUTHORITY</Data>
+    <Data Name="SubjectLogonId">0x3e7</Data>
+    <Data Name="NewUserSid">S-1-5-21-1234567890-987654321-123456789-1001</Data>
+    <Data Name="NewUserName">testuser</Data>
+    <Data Name="NewDomainName">DOMAIN</Data>
+    <Data Name="NewLogonId">0x456789a</Data>
+    <Data Name="LogonType">2</Data>
+    <Data Name="LogonProcessName">User32 </Data>
+    <Data Name="AuthenticationPackageName">Negotiate</Data>
+    <Data Name="WorkstationName">WORKSTATION1</Data>
+    <Data Name="LogonGuid">{12345678-abcd-1234-abcd-1234567890ab}</Data>
+    <Data Name="TransmittedServices">-</Data>
+    <Data Name="LmPackageName">-</Data>
+    <Data Name="KeyLength">0</Data>
+    <Data Name="ProcessId">0x987</Data>
+    <Data Name="ProcessName">C:\Windows\System32\winlogon.exe</Data>
+    <Data Name="IpAddress">127.0.0.1</Data>
+    <Data Name="IpPort">0</Data>
+    <Data Name="ImpersonationLevel">%%1832</Data>
+    <Data Name="RestrictedAdminMode">-</Data>
+    <Data Name="TargetUserName">-</Data>
+    <Data Name="TargetDomainName">-</Data>
+    <Data Name="TargetUserSid">-</Data>
+    <Data Name="TargetLogonId">-</Data>
+    <Data Name="TargetLinkedLogonId">-</Data>
+    <Data Name="ElevatedToken">%%1842</Data>
+  </EventData>
+</Event>

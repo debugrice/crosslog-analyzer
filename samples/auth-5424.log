@@ -1,0 +1,34 @@
+<34>1 2026-03-07T11:15:44.991Z server1 sshd 3180 SSHD_AUTH_SUCCESS - Accepted publickey for admin from 10.10.5.44 port 44212 ssh2: RSA SHA256:Ys3Yw0L4k3yEXAMPLE
+<34>1 2026-03-07T11:15:44.993Z server1 sshd 3180 SSHD_SESSION - pam_unix(sshd:session): session opened for user admin(uid=0) by (uid=0)
+<34>1 2026-03-07T11:20:03.441Z server1 sshd 3180 SSHD_SESSION - pam_unix(sshd:session): session closed for user admin
+<34>1 2026-03-07T11:33:08.017Z server1 sshd 3321 SSHD_AUTH_SUCCESS - Accepted password for devops from 172.16.1.55 port 60422 ssh2
+<34>1 2026-03-07T11:33:08.021Z server1 sshd 3321 SSHD_SESSION - pam_unix(sshd:session): session opened for user devops(uid=1002) by (uid=0)
+<34>1 2026-03-07T11:45:55.331Z server1 sshd 3321 SSHD_SESSION - pam_unix(sshd:session): session closed for user devops
+<34>1 2026-03-07T10:15:01.123Z server1 sshd 2145 SSHD_LOGIN_FAIL - Failed password for invalid user admin from 192.168.50.23 port 53422 ssh2
+<34>1 2026-03-07T10:15:05.221Z server1 sshd 2145 SSHD_LOGIN_FAIL - Failed password for invalid user admin from 192.168.50.23 port 53422 ssh2
+<34>1 2026-03-07T10:15:09.887Z server1 sshd 2145 SSHD_LOGIN_FAIL - Failed password for invalid user admin from 192.168.50.23 port 53422 ssh2
+<34>1 2026-03-07T10:15:12.334Z server1 sshd 2145 SSHD_LOGIN_FAIL - Failed password for invalid user admin from 192.168.50.23 port 53422 ssh2
+<34>1 2026-03-07T10:15:16.412Z server1 sshd 2145 SSHD_LOGIN_FAIL - Failed password for carter from 192.168.50.23 port 53422 ssh2
+<34>1 2026-03-07T10:15:20.004Z server1 sshd 2145 SSHD_LOGIN_FAIL - Failed password for carter from 192.168.50.23 port 53422 ssh2
+<34>1 2026-03-07T10:15:24.992Z server1 sshd 2145 SSHD_LOGIN_FAIL - Failed password for carter from 192.168.50.23 port 53422 ssh2
+<34>1 2026-03-07T10:15:30.115Z server1 sshd 2145 SSHD_AUTH - pam_faillock(sshd:auth): Consecutive login failures for user carter account temporarily locked
+<34>1 2026-03-07T10:15:30.116Z server1 sshd 2145 SSHD_AUTH - pam_faillock(sshd:auth): user carter is locked out for 1800 seconds
+<34>1 2026-03-07T10:16:02.551Z server1 sshd 2190 SSHD_LOGIN_FAIL - Failed password for carter from 192.168.50.23 port 53444 ssh2
+<34>1 2026-03-07T10:16:02.553Z server1 sshd 2190 SSHD_AUTH - pam_faillock(sshd:auth): user carter is locked out for 1800 seconds
+<34>1 2026-03-07T11:02:14.115Z server1 sshd 3012 SSHD_AUTH_SUCCESS - Accepted password for carter from 192.168.50.23 port 53610 ssh2
+<34>1 2026-03-07T11:02:14.118Z server1 sshd 3012 SSHD_SESSION - pam_unix(sshd:session): session opened for user carter(uid=1001) by (uid=0)
+<34>1 2026-03-07T12:05:11.223Z kdc01 krb5kdc 4211 KRB5_AUTH_FAIL - AS_REQ (7 etypes {aes256-cts-hmac-sha1-96}) 192.168.50.42: CLIENT_NOT_FOUND: client user1@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM
+<34>1 2026-03-07T12:05:15.441Z kdc01 krb5kdc 4211 KRB5_AUTH_FAIL - AS_REQ (7 etypes {aes256-cts-hmac-sha1-96}) 192.168.50.42: PREAUTH_FAILED: user2@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM
+<34>1 2026-03-07T12:05:20.997Z kdc01 krb5kdc 4211 KRB5_AUTH_FAIL - AS_REQ (7 etypes {aes256-cts-hmac-sha1-96}) 192.168.50.42: PREAUTH_FAILED: user2@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM
+<34>1 2026-03-07T12:05:24.311Z kdc01 krb5kdc 4211 KRB5_AUTH_FAIL - AS_REQ (7 etypes {aes256-cts-hmac-sha1-96}) 192.168.50.42: PREAUTH_FAILED: user2@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM
+<34>1 2026-03-07T12:05:31.204Z kdc01 krb5kdc 4211 KRB5_AUTH_FAIL - AS_REQ (7 etypes {aes256-cts-hmac-sha1-96}) 10.10.20.77: CLIENT_REVOKED: user3@EXAMPLE.COM for krbtgt/EXAMPLE.COM@EXAMPLE.COM
+<34>1 2026-03-07T12:06:01.551Z kdc01 krb5kdc 4211 KRB5_AUTH_FAIL - TGS_REQ (7 etypes {aes256-cts-hmac-sha1-96}) 192.168.50.42: SERVER_NOT_FOUND: krbtgt/OTHERREALM.COM@EXAMPLE.COM for user2@EXAMPLE.COM
+<34>1 2026-03-07T13:10:11.441Z server1 sudo 4123 SUDO_CMD - carter : TTY=pts/1 ; PWD=/home/carter ; USER=root ; COMMAND=/usr/bin/apt update
+<34>1 2026-03-07T13:10:11.442Z server1 sudo 4123 SUDO_SESSION - pam_unix(sudo:session): session opened for user root(uid=0) by carter(uid=1001)
+<34>1 2026-03-07T13:11:22.887Z server1 sudo 4178 SUDO_CMD - carter : TTY=pts/1 ; PWD=/home/carter ; USER=root ; COMMAND=/usr/bin/systemctl restart sshd
+<34>1 2026-03-07T13:11:22.889Z server1 sudo 4178 SUDO_SESSION - pam_unix(sudo:session): session opened for user root(uid=0) by carter(uid=1001)
+<34>1 2026-03-07T13:12:45.003Z server1 sudo 4210 SUDO_DENIED - devops : user NOT in sudoers ; TTY=pts/2 ; PWD=/home/devops ; USER=root ; COMMAND=/usr/bin/cat /etc/shadow
+<34>1 2026-03-07T13:14:01.552Z server1 sudo 4301 SUDO_CMD - admin : TTY=pts/3 ; PWD=/home/admin ; USER=root ; COMMAND=/usr/bin/useradd attacker
+<34>1 2026-03-07T13:14:01.554Z server1 sudo 4301 SUDO_SESSION - pam_unix(sudo:session): session opened for user root(uid=0) by admin(uid=1000)
+
+<34>1 2026-03-07T13:15:17.201Z server1 sudo 4301 SUDO_SESSION - pam_unix(sudo:session): session closed for user root

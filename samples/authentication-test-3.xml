@@ -1,0 +1,32 @@
+<Event  xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Microsoft-Windows-Security-Auditing" Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}" />
+    <EventID>4771</EventID>
+    <Version>0</Version>
+    <Level>0</Level>
+    <Task>14336</Task>
+    <Opcode>0</Opcode>
+    <Keywords>0x8010000000000000</Keywords>
+    <TimeCreated SystemTime="2025-03-07T18:19:00.000000000Z" />
+    <EventRecordID>123456</EventRecordID>
+    <Correlation />
+    <Execution ProcessID="512" ThreadID="1024" />
+    <Channel>Security</Channel>
+    <Computer>DC1.corp.example.com</Computer>
+    <Security />
+  </System>
+  <EventData>
+    <Data Name="AccountName">johndoe</Data>
+    <Data Name="AccountDomain">corp.example.com</Data>
+    <Data Name="AccountType">User Account</Data>
+    <Data Name="IpAddress">192.168.1.101</Data>
+    <Data Name="IpPort">51245</Data>
+    <Data Name="Workstation">WORKSTATION1</Data>
+    <Data Name="Status">0x18</Data>
+    <Data Name="TicketOptions">0x40810000</Data>
+    <Data Name="PreAuthType">2</Data>
+    <Data Name="CertificateIssuerName" />
+    <Data Name="CertificateSerialNumber" />
+    <Data Name="CertificateThumbprint" />
+  </EventData>
+</Event>
