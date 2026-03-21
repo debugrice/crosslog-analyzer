@@ -46,13 +46,13 @@ def discover_input_files( input_paths: Iterable[Path],
     return discovered
 
 def is_supported_file(file_path: Path) -> bool:
-    """_summary_
+    """Helper function used to determine if the file is a supported type.
 
     Args:
-        file_path (Path): _description_
+        file_path (Path): File path object containing the filename
 
     Returns:
-        bool: _description_
+        bool: True if supported; False if not supported
     """
     suffixes = file_path.suffixes
 
