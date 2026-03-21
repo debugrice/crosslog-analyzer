@@ -8,7 +8,8 @@ SUPPORTED_EXTENSIONS = {
     ".log",
     ".txt",
     ".evtx",
-    ".xml"
+    ".xml",
+    ".gz"
 }
 
 def discover_input_files( input_paths: Iterable[Path],
@@ -45,15 +46,31 @@ def discover_input_files( input_paths: Iterable[Path],
     return discovered
 
 def is_supported_file(file_path: Path) -> bool:
-    """Helper function used to identify supported file types.
+    """_summary_
 
     Args:
-        file_path (Path): File path object
+        file_path (Path): _description_
 
     Returns:
-        bool: True if contained within the SUPPORTED_EXTENSIONS
+        bool: _description_
     """
-    if (file_path.suffix.lower() in SUPPORTED_EXTENSIONS) or (file_path.suffix == ""):
+    suffixes = file_path.suffixes
+
+    # No suffix at all - Standard syslog files
+    if not suffixes:
         return True
-    
+
+    # Normal supported extensions
+    if file_path.suffix in SUPPORTED_EXTENSIONS:
+        return True
+
+    # Looks for the numbered digits at the end of the rotated logs (syslog.1 or auth.log.2)
+    if suffixes[-1][1:].isdigit():
+        return True
+
+    # Gzipped rotated logs like syslog.1.gz or auth.log.2.gz
+    if len(suffixes) >= 2 and suffixes[-1] == ".gz":
+        if suffixes[-2][1:].isdigit() or suffixes[-2] in {".log", ".txt"}:
+            return True
+
     return False

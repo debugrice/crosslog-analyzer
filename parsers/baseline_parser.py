@@ -1,4 +1,5 @@
 
+import gzip
 from pathlib import Path
 from models.parsed_event import ParserErrorEvent
 from abc import ABC, abstractmethod
@@ -15,7 +16,14 @@ class BaseLineParser:
         Yields:
             _type_: ParseEvent or ParseErrorEvent message
         """
-        with file_path.open("r", encoding="utf-8", errors="replace") as f:
+        # Added to open archived gzip files
+        if file_path.suffix == ".gz":
+            f = gzip.open(file_path, "rt", encoding="utf-8", errors="replace")
+        else:
+        # Standard text file open statement
+            f = open(file_path, "r", encoding="utf-8", errors="replace")
+
+        with f:
             for line_number, line in enumerate(f, start=1):
                 raw = line.rstrip("\n")
                 

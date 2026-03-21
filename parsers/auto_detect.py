@@ -1,5 +1,6 @@
 
 import re
+import gzip
 from pathlib import Path
 from parsers.windows_evtx import EvtxParser
 from parsers.windows_xml import WindowsXmlParser
@@ -139,10 +140,16 @@ def get_first_nonempty_line(file_path: str) -> str:
         str: First line of the file that is not empty.
     """
     try:
-        with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+        # gzip files need to be opened differently that standard text files
+        if file_path.suffix == ".gz":
+            f = gzip.open(file_path, "rt", encoding="utf-8", errors="replace")
+        else:
+        # Standard text file open statement
+            f = open(file_path, "r", encoding="utf-8", errors="replace")
+
+        with f:
             for line in f:
                 line = line.strip()
-                
                 if line:
                     return line
     except OSError:
