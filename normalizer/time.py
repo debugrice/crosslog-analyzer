@@ -23,7 +23,9 @@ def normalize_timestamp( raw_timestamp: str | None,
         str | None: ISO formatted timestamp
     """
     if not raw_timestamp:
-        return None
+        return 
+    if parser_type == "auditd":
+        return _normalized_audit(raw_timestamp, default_tz)
     if parser_type == "rfc3164":
         return _normalize_rfc3164(raw_timestamp, default_tz, reference_year)
     if parser_type == "rfc5424":
@@ -32,6 +34,21 @@ def normalize_timestamp( raw_timestamp: str | None,
         return _normalize_wintime(raw_timestamp)
     
     raise ValueError(f"Unsupported parser_type: {parser_type}")
+
+def _normalized_audit(raw_timestamp: str, default_tz: str) -> str:
+    """Function used to normalize the audit parsed event timestamp.
+
+    Args:
+        raw_timestamp (str): Extracted Unix Epoch time from the audit file
+        default_tz (str): Default timezone (UTC)
+
+    Returns:
+        str: ISO 8601 Timestamp with milliseconds
+    """
+    timezone = ZoneInfo(default_tz)
+    dt = datetime.fromtimestamp(float(raw_timestamp), tz=timezone)
+    
+    return dt.isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 def _normalize_rfc3164(raw_timestamp: str, 
                        default_tz: str, 
@@ -44,7 +61,7 @@ def _normalize_rfc3164(raw_timestamp: str,
         reference_year (int | None): Reference year if timestamp is missing data.
 
     Returns:
-        str: ISO 8601 formatted timestamp.
+        str: ISO 8601 formatted timestamp with milliseconds.
     """
     tz = ZoneInfo(default_tz)
     # Just in case the reference_year is empty
@@ -59,13 +76,7 @@ def _normalize_rfc3164(raw_timestamp: str,
     if reference_year is None and dt > now:
         dt =dt.replace(year=dt.year -1)
         
-    return dt.isoformat(timespec="seconds")
-
-def fix_rfc3164_year(candidate, reference_time):
-    if candidate > reference_time + timedelta(days=1):
-        candidate = candidate.replace(year=candidate.year - 1)
-
-    return candidate
+    return dt.isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 def _normalize_rfc5424(raw_timestamp: str) -> str:
     """Function for processing and normalizing the RFC 5424 timestamps.
@@ -74,7 +85,7 @@ def _normalize_rfc5424(raw_timestamp: str) -> str:
         raw_timestamp (str): Parser extracted timestamp.
             
     Returns:
-        str: ISO 8601 formatted timestamp.
+        str: ISO 8601 formatted timestamp with milliseconds.
     """
     # Remove the whitespaces from the leading and trailing
     value = raw_timestamp.strip()
@@ -83,7 +94,7 @@ def _normalize_rfc5424(raw_timestamp: str) -> str:
     dt = datetime.fromisoformat(value)
     
     # return the ISO 8061 timestamp
-    return dt.isoformat(timespec="seconds")
+    return dt.isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 def _normalize_wintime(raw_timestamp: str) -> str:
     """Function for processing and normalizing the Windows Event Log timestamps.
@@ -106,4 +117,4 @@ def _normalize_wintime(raw_timestamp: str) -> str:
     dt = datetime.fromisoformat(value)
     
     # return the properly formatted timestamp    
-    return dt.isoformat(timespec="seconds")
+    return dt.isoformat(timespec="milliseconds").replace("+00:00", "Z")

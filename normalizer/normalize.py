@@ -5,7 +5,25 @@ from normalizer.time import normalize_timestamp
 from normalizer.helpers import *
 from normalizer.auth import enrich_auth_fields
 
-def normalize_event(parsed_event: ParsedEvent) -> Event:
+from models.audit_event import AuditdMergedEvent
+
+def normalize_event(parser_event) -> Event:
+    """Generic function used to normalize AuditMergedEvents and single parsed events
+
+    Args:
+        parser_event (_type_): Audit merged events or parsed events
+
+    Returns:
+        Event: A normalized event
+    """
+    # Switch for detecting a audit merged event
+    if isinstance(parser_event, AuditdMergedEvent):
+        return normalize_auditd_grouped_event(parser_event)
+
+    # Standard single parsed event log entry
+    return single_normalize_event(parser_event)
+
+def single_normalize_event(parsed_event: ParsedEvent) -> Event:
     """Function used by the cross log pipeline to normalize parsed events.
 
     Args:
@@ -42,7 +60,7 @@ def normalize_event(parsed_event: ParsedEvent) -> Event:
     )
     
 def determine_category(parsed_event) -> str | None:
-    """Function use to determine the category for this parsed event.
+    """Function used to determine the category for this parsed event.
 
     Args:
         parsed_event (ParsedEvent): Message provided by the parser. 
@@ -58,6 +76,11 @@ def determine_category(parsed_event) -> str | None:
                 return "authentication"
             if prog in {"kernel", "firewalld", "iptables"}:
                 return "network"
+    if parsed_event.parser_type in {"auditd" }:
+        if parsed_event.program:
+            prog = parsed_event.program.lower()
+            if prog in { "auditd" }:
+                return "kernel-level"
 
     if parsed_event.parser_type in {"evtx", "windows_xml"}:
         # TODO More categories will need to be added.
@@ -109,5 +132,192 @@ def determine_event_type(parsed_event) -> str | None:
             return "su_event"
         if prog == "kernel":
             return "kernel_event"
+        if prog == "auditd":
+            return _get_audit_event_type(parsed_event.fields["record_type"])    
 
     return "generic_event"
+
+def _get_audit_event_type(msg_type: str) -> str:
+    rtn_msg = None
+    if msg_type:
+        if msg_type == "SYSCALL":
+            rtn_msg = "process_activity"
+        elif msg_type == "EXECVE":
+            rtn_msg = "process_creation"
+        elif msg_type == "PATH":
+            rtn_msg = "file_access"
+        elif msg_type == "USER_LOGIN":
+            rtn_msg = "authentication"
+        elif msg_type == "USER_CMD":
+            rtn_msg = "privilege_execution"
+        elif msg_type == "AVC":
+            rtn_msg = "security_policy"
+    
+    return rtn_msg
+
+def normalize_auditd_grouped_event(grouped_event: AuditdMergedEvent) -> Event:
+    """Function used to handle parsing of the audit event records
+
+    Args:
+        grouped_event (AuditdMergedEvent): Object containing multiple entries
+
+    Returns:
+        Event: Normalized event to be used by the detect stage.
+    """
+    syscall_record      = None
+    execve_record       = None
+    cwd_record          = None
+    path_records        = []
+    proctitle_record    = None
+
+    # A list of records must be iterated over to determine the audit intent
+    for record in grouped_event.records:
+        record_type = record.fields.get("record_type")
+
+        if record_type == "SYSCALL":
+            syscall_record = record
+        elif record_type == "EXECVE":
+            execve_record = record
+        elif record_type == "CWD":
+            cwd_record = record
+        elif record_type == "PATH":
+            path_records.append(record)
+        elif record_type == "PROCTITLE":
+            proctitle_record = record
+
+    if syscall_record is None:
+        first = grouped_event.records[0]
+        return Event(
+            timestamp=normalize_timestamp(
+                raw_timestamp=first.timestamp,
+                parser_type=first.parser_type,
+            ),
+            host=first.host,
+            source=first.source,
+            parser_type=first.parser_type,
+            program=None,
+            pid=None,
+            message=first.message,
+            severity=None,
+            facility=None,
+            event_id=None,
+            category="system",
+            event_type="audit",
+            fields={
+                "audit_id": grouped_event.audit_id,
+                "record_count": len(grouped_event.records),
+            },
+        )
+
+    fields = dict(syscall_record.fields)
+    fields["audit_id"] = grouped_event.audit_id
+    fields["auditd_types"] = [r.fields.get("record_type") for r in grouped_event.records]
+
+    paths = []
+    for path_record in path_records:
+        path = path_record.fields.get("name")
+        if path:
+            paths.append(path)
+
+    if paths:
+        fields["paths"] = paths
+        fields["path"] = paths[0]
+
+    if cwd_record:
+        fields["cwd"] = cwd_record.fields.get("cwd")
+
+    if proctitle_record:
+        fields["proctitle"] = proctitle_record.fields.get("proctitle")
+
+    if execve_record:
+        execve_fields = _parse_execve_fields(execve_record.fields)
+        fields.update(execve_fields)
+        
+    program = fields.get("comm")
+    pid = _safe_int(fields.get("pid"))
+
+    return Event(
+         timestamp=normalize_timestamp(
+                raw_timestamp=syscall_record.timestamp,
+                parser_type=syscall_record.parser_type,
+        ),
+        host=syscall_record.host,
+        source=syscall_record.source,
+        parser_type=syscall_record.parser_type,
+        program=program,
+        pid=pid,
+        message=syscall_record.message,
+        severity=None,
+        facility=None,
+        event_id=_extract_numeric_event_id(grouped_event.audit_id),
+        category="file_access" if paths else "system",
+        event_type="syscall",
+        fields=fields,
+    )
+
+def _safe_int(value: str) -> int | None:
+    """Function used to safely extract an integer.
+
+    Args:
+        value (_type_): string value to be converted
+
+    Returns:
+        _type_: Integer if the input string can be convertd; otherwise None
+    """
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_numeric_event_id(audit_id: str) -> int | None:
+    """Helper function to extract the audit number
+
+    Args:
+        audit_id (str): string representing the audit id
+
+    Returns:
+        int | None: Integer value of the audit id
+    """
+    try:
+        return int(audit_id.rsplit(":", 1)[-1])
+    except (ValueError, AttributeError):
+        return None
+    
+def _parse_execve_fields(fields: dict) -> dict:
+    """Extract argc/a0/a1/... from an EXECVE audit record and normalize them into:
+      - argc
+      - argv (list[str])
+      - command_line (str)
+    Args:
+        fields (dict): Dictionary of fields from the parsed event
+
+    Returns:
+        dict: Dictionary of normalized values for the command line arguments
+    """
+    
+    result = {}
+
+    argc = _safe_int(fields.get("argc"))
+    if argc is not None:
+        result["argc"] = argc
+
+    argv = []
+
+    # Collect a0, a1, a2... in numeric order
+    arg_items = []
+    for key, value in fields.items():
+        if key.startswith("a") and key[1:].isdigit():
+            arg_index = int(key[1:])
+            arg_items.append((arg_index, value))
+
+    arg_items.sort(key=lambda item: item[0])
+
+    for _, value in arg_items:
+        argv.append(value)
+
+    if argv:
+        result["argv"] = argv
+        result["command_line"] = " ".join(argv)
+
+    return result
