@@ -1,8 +1,8 @@
 
 import csv
-from collections import Counter
-from models.run_result import RunResult
 from pathlib import Path
+from models.run_result import RunResult
+
 
 def write_findings_csv(result: RunResult, output_path: Path) -> None:
     """Function to write the findings to a CSV file.
