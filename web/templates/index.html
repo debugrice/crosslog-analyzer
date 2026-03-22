@@ -1,0 +1,53 @@
+<!--
+    index.html
+    File upload form for CrossLog Analyzer.
+
+    Presents controls for selecting log files, choosing a parser format,
+    and toggling fail-fast mode. Submits a multipart POST request to /analyze.
+    Displays a validation error banner when one is passed from the route.
+-->
+{% extends "base.html" %}
+{% block content %}
+
+<div class="upload-card">
+  <h1>Analyze Log Files</h1>
+  <p class="subtitle">Upload one or more log files to detect cybersecurity events.</p>
+
+  <!-- Error banner displayed when the route returns a validation or pipeline error -->
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form action="/analyze" method="post" enctype="multipart/form-data">
+
+    <!-- Log file selector: accepts all formats supported by the pipeline -->
+    <div class="form-group">
+      <label for="logfiles">Log Files</label>
+      <input type="file" id="logfiles" name="logfiles" multiple
+             accept=".log,.txt,.evtx,.xml" required />
+      <span class="hint">Supported formats: .log, .txt, .evtx, .xml</span>
+    </div>
+
+    <!-- Parser format selector: auto-detect is the default -->
+    <div class="form-group">
+      <label for="format">Parser Format</label>
+      <select id="format" name="format">
+        <option value="auto">Auto-detect</option>
+        <option value="rfc3164">RFC 3164</option>
+        <option value="rfc5424">RFC 5424</option>
+        <option value="evtx">Windows EVTX</option>
+        <option value="xml">Windows XML</option>
+      </select>
+    </div>
+
+    <!-- Fail-fast toggle: stops the pipeline on the first error encountered -->
+    <div class="form-group form-check">
+      <input type="checkbox" id="fail_fast" name="fail_fast" />
+      <label for="fail_fast">Fail fast (stop on first error)</label>
+    </div>
+
+    <button type="submit" class="btn-primary">Run Analysis</button>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,476 @@
+/* ── Reset & Base ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0f1117;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+a { color: #63b3ed; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Navbar ───────────────────────────────────────────────────────── */
+.navbar {
+  background: #1a1d27;
+  border-bottom: 1px solid #2d3148;
+  padding: 0 2rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #90cdf4;
+  letter-spacing: 0.02em;
+}
+
+/* ── Layout ───────────────────────────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* ── Upload Card ──────────────────────────────────────────────────── */
+.upload-card {
+  max-width: 560px;
+  margin: 3rem auto;
+  background: #1a1d27;
+  border: 1px solid #2d3148;
+  border-radius: 10px;
+  padding: 2.5rem;
+}
+
+.upload-card h1 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+.subtitle { color: #94a3b8; margin-bottom: 2rem; }
+
+/* ── Forms ────────────────────────────────────────────────────────── */
+.form-group {
+  margin-bottom: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+input[type="file"],
+select {
+  background: #0f1117;
+  border: 1px solid #3a3f5c;
+  border-radius: 6px;
+  color: #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+input[type="file"]:focus,
+select:focus {
+  outline: 2px solid #63b3ed;
+  outline-offset: 1px;
+}
+
+.hint { font-size: 0.75rem; color: #64748b; }
+
+/* ── Buttons ──────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-block;
+  background: #2b6cb0;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.15s;
+}
+
+.btn-primary:hover { background: #2c5282; }
+
+.btn-secondary {
+  display: inline-block;
+  background: #1a1d27;
+  color: #90cdf4;
+  border: 1px solid #2d3148;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-secondary:hover { background: #2d3148; text-decoration: none; }
+
+/* ── Alert ────────────────────────────────────────────────────────── */
+.alert {
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.alert-error { background: #2d1a1a; border: 1px solid #742a2a; color: #fc8181; }
+
+/* ── Results Header ───────────────────────────────────────────────── */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.results-header h1 { font-size: 1.6rem; }
+
+/* ── Stat Grid ────────────────────────────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 0;
+}
+
+.stat-card {
+  background: #1a1d27;
+  border: 1px solid #2d3148;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.stat-card:hover        { border-color: #4a5080; background: #1e2235; }
+.stat-card--active      { border-color: #63b3ed !important; background: #1a2a3a !important; }
+.stat-card--alert       { border-color: #c53030; }
+.stat-card--alert:hover { border-color: #e53e3e; }
+.stat-card--warn        { border-color: #b7791f; }
+.stat-card--warn:hover  { border-color: #d69e2e; }
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-hint  { font-size: 0.7rem; color: #4a5568; margin-top: 0.2rem; }
+
+/* ── Stat Drawers ─────────────────────────────────────────────────── */
+.stat-drawer {
+  background: #1a1d27;
+  border: 1px solid #63b3ed;
+  border-radius: 10px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.drawer-inner {
+  padding: 1.25rem 1.5rem;
+}
+
+.drawer-inner h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #90cdf4;
+  margin-bottom: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Space below stat grid when no drawer is open */
+.stat-grid + .stat-drawer[hidden] + .breakdown-grid,
+.stat-grid + .breakdown-grid {
+  margin-top: 2rem;
+}
+
+/* ── Breakdown Grid ───────────────────────────────────────────────── */
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.breakdown-card {
+  background: #1a1d27;
+  border: 1px solid #2d3148;
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.breakdown-card h2 { font-size: 1rem; margin-bottom: 0.75rem; color: #cbd5e1; }
+
+.breakdown-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.breakdown-table th { text-align: left; color: #64748b; font-weight: 600; padding-bottom: 0.4rem; border-bottom: 1px solid #2d3148; }
+.breakdown-table td { padding: 0.35rem 0; }
+.breakdown-table tr:not(:last-child) td { border-bottom: 1px solid #1e2235; }
+
+/* ── Severity Badges ──────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge--critical { background: #742a2a; color: #fed7d7; }
+.badge--high     { background: #7b341e; color: #fbd38d; }
+.badge--medium   { background: #744210; color: #fefcbf; }
+.badge--low      { background: #2a4365; color: #bee3f8; }
+.badge--info     { background: #1a365d; color: #90cdf4; }
+.badge--unknown  { background: #2d3748; color: #a0aec0; }
+
+/* ── Section ──────────────────────────────────────────────────────── */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 { font-size: 1.1rem; margin-bottom: 0.75rem; color: #cbd5e1; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.section-header h2 { margin-bottom: 0; }
+
+/* ── Column toggle button & dropdown ─────────────────────────────── */
+.col-toggle-wrap {
+  position: relative;
+}
+
+.btn-col-toggle {
+  background: #1a1d27;
+  border: 1px solid #3a3f5c;
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-col-toggle:hover { border-color: #63b3ed; color: #e2e8f0; }
+
+.col-toggle-arrow { font-size: 0.65rem; }
+
+.col-toggle-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #1a1d27;
+  border: 1px solid #3a3f5c;
+  border-radius: 8px;
+  padding: 0.6rem 0.25rem;
+  z-index: 100;
+  min-width: 150px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.col-toggle-dropdown label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: #cbd5e1;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.col-toggle-dropdown label:hover { background: #2d3148; }
+
+.col-toggle-dropdown input[type="checkbox"] {
+  width: auto;
+  accent-color: #63b3ed;
+  cursor: pointer;
+}
+
+/* Column hiding is managed entirely in JavaScript via visibility:collapse on the
+   <col> element combined with display:none on each cell in that column. No CSS
+   class rules are used, which avoids ordering issues with table-layout:fixed. */
+
+.empty { color: #64748b; font-style: italic; }
+
+/* ── Findings Table ───────────────────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #2d3148;
+  border-radius: 10px;
+}
+
+.findings-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.825rem;
+  table-layout: fixed;
+}
+
+.findings-table thead tr {
+  background: #1a1d27;
+  border-bottom: 1px solid #2d3148;
+}
+
+.findings-table th {
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.findings-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.findings-table th.sortable:hover { color: #90cdf4; }
+
+.findings-table th.sortable::after {
+  content: " ⇅";
+  font-size: 0.7rem;
+  opacity: 0.4;
+}
+
+.findings-table th[data-sort="asc"]::after  { content: " ↑"; opacity: 1; color: #63b3ed; }
+.findings-table th[data-sort="desc"]::after { content: " ↓"; opacity: 1; color: #63b3ed; }
+
+/* ── Column resize handle ─────────────────────────────────────────── */
+.col-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 1;
+  border-right: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.col-resize-handle:hover,
+.col-resizing .col-resize-handle {
+  border-right-color: #63b3ed;
+}
+
+/* Suppress text selection while dragging */
+.col-resizing {
+  user-select: none;
+  cursor: col-resize;
+}
+
+.findings-table tbody tr:nth-child(odd) { background: #12151f; }
+.findings-table tbody tr:nth-child(even) { background: #1a1d27; }
+
+.finding-row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.finding-row:hover { background: #1e2235 !important; }
+
+.findings-table td {
+  padding: 0.6rem 0.9rem;
+  vertical-align: top;
+  border-bottom: 1px solid #1e2235;
+}
+
+/* ── Fields Detail ────────────────────────────────────────────────── */
+.fields-row td { padding: 0; }
+
+.fields-detail {
+  padding: 0.75rem 1.2rem;
+  background: #0f1117;
+  border-top: 1px solid #2d3148;
+}
+
+.fields-detail strong { font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 0.5rem; }
+
+.fields-table { border-collapse: collapse; font-size: 0.8rem; }
+.fields-table td { padding: 0.2rem 0.75rem 0.2rem 0; vertical-align: top; }
+.field-key { color: #63b3ed; font-weight: 600; white-space: nowrap; min-width: 140px; }
+
+/* ── Errors Section ───────────────────────────────────────────────── */
+.errors-summary {
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f6ad55;
+  padding: 0.5rem 0;
+  list-style: none;
+}
+
+.errors-summary::-webkit-details-marker { display: none; }
+.errors-summary::before { content: "▶  "; font-size: 0.7rem; }
+details[open] .errors-summary::before { content: "▼  "; }
+
+details h3 { font-size: 0.9rem; margin: 1rem 0 0.4rem; color: #94a3b8; }
+
+.error-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.error-table th {
+  text-align: left;
+  color: #64748b;
+  padding: 0.3rem 0.75rem 0.3rem 0;
+  border-bottom: 1px solid #2d3148;
+}
+
+.error-table td {
+  padding: 0.35rem 0.75rem 0.35rem 0;
+  border-bottom: 1px solid #1e2235;
+  vertical-align: top;
+}
+
+/* ── Utilities ────────────────────────────────────────────────────── */
+.mono    { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+.truncate { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.message-cell {
+  min-width: 280px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+}

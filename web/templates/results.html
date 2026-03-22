@@ -1,0 +1,546 @@
+<!--
+    results.html
+    Analysis results dashboard for CrossLog Analyzer.
+
+    Displays a summary of the pipeline run including per-file statistics,
+    findings broken down by severity and category, a sortable and configurable
+    findings table, and a collapsible error report. All interactive behaviour
+    (stat card drawers, column sorting, resizing, and visibility) is handled
+    by the inline script block at the bottom of this template.
+-->
+{% extends "base.html" %}
+{% block content %}
+
+<div class="results-header">
+  <h1>Analysis Results</h1>
+  <a href="/" class="btn-secondary">Analyze Another</a>
+</div>
+
+<!-- Summary stat cards — Files and Events cards open inline drawers;
+     Findings and Errors cards scroll to their respective sections. -->
+<div class="stat-grid">
+  <button class="stat-card" data-drawer="drawer-files">
+    <span class="stat-value">{{ result.files_processed }}</span>
+    <span class="stat-label">Files Processed</span>
+    <span class="stat-hint">click for details</span>
+  </button>
+  <button class="stat-card" data-drawer="drawer-events">
+    <span class="stat-value">{{ result.total_events() }}</span>
+    <span class="stat-label">Events Parsed</span>
+    <span class="stat-hint">click for details</span>
+  </button>
+  <button class="stat-card {{ 'stat-card--alert' if result.total_findings() > 0 }}" data-scroll="findings-section">
+    <span class="stat-value">{{ result.total_findings() }}</span>
+    <span class="stat-label">Findings</span>
+    <span class="stat-hint">click to jump</span>
+  </button>
+  <button class="stat-card {{ 'stat-card--warn' if result.has_errors() }}" data-scroll="errors-section">
+    <span class="stat-value">
+      {{ result.total_parser_errors() + result.total_normalization_errors() + result.total_detection_errors() + result.total_file_errors() }}
+    </span>
+    <span class="stat-label">Errors</span>
+    <span class="stat-hint">click to jump</span>
+  </button>
+</div>
+
+<!-- Stat card detail drawers — rendered hidden and toggled by the stat card buttons -->
+<div id="drawer-files" class="stat-drawer" hidden>
+  <div class="drawer-inner">
+    <h3>Files Processed</h3>
+    {% if file_rows %}
+    <table class="breakdown-table">
+      <thead><tr><th>Filename</th><th>Parser</th><th>Events</th><th>Findings</th></tr></thead>
+      <tbody>
+        {% for row in file_rows %}
+        <tr>
+          <td class="mono">{{ row.name }}</td>
+          <td>{{ row.parser }}</td>
+          <td>{{ row.events }}</td>
+          <td>{{ row.findings }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No file data available.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div id="drawer-events" class="stat-drawer" hidden>
+  <div class="drawer-inner">
+    <h3>Events by File</h3>
+    {% if file_rows %}
+    <table class="breakdown-table">
+      <thead><tr><th>Filename</th><th>Parser</th><th>Events</th></tr></thead>
+      <tbody>
+        {% for row in file_rows %}
+        <tr>
+          <td class="mono">{{ row.name }}</td>
+          <td>{{ row.parser }}</td>
+          <td>{{ row.events }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No event data available.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if severity_rows or category_rows %}
+<div class="breakdown-grid">
+
+  {% if severity_rows %}
+  <div class="breakdown-card">
+    <h2>Findings by Severity</h2>
+    <table class="breakdown-table">
+      <thead><tr><th>Severity</th><th>Count</th></tr></thead>
+      <tbody>
+        {% for severity, count in severity_rows %}
+        <tr>
+          <td><span class="badge badge--{{ severity }}">{{ severity }}</span></td>
+          <td>{{ count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% if category_rows %}
+  <div class="breakdown-card">
+    <h2>Findings by Category</h2>
+    <table class="breakdown-table">
+      <thead><tr><th>Category</th><th>Count</th></tr></thead>
+      <tbody>
+        {% for category, count in category_rows %}
+        <tr><td>{{ category }}</td><td>{{ count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}
+
+<!-- Findings table — sortable columns, resizable column widths,
+     per-column visibility controls, and expandable detail rows -->
+<div class="section" id="findings-section">
+  <div class="section-header">
+    <h2>Findings</h2>
+    {% if result.findings %}
+    <div class="col-toggle-wrap">
+      <button class="btn-col-toggle" id="col-toggle-btn" aria-expanded="false">
+        Columns <span class="col-toggle-arrow">▾</span>
+      </button>
+      <div class="col-toggle-dropdown" id="col-toggle-dropdown" hidden>
+        <label><input type="checkbox" data-col-hide="1" checked> Severity</label>
+        <label><input type="checkbox" data-col-hide="2" checked> Rule ID</label>
+        <label><input type="checkbox" data-col-hide="3" checked> Title</label>
+        <label><input type="checkbox" data-col-hide="4" checked> Host</label>
+        <label><input type="checkbox" data-col-hide="5" checked> Timestamp</label>
+        <label><input type="checkbox" data-col-hide="6" checked> Source</label>
+        <label><input type="checkbox" data-col-hide="7" checked> Message</label>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% if result.findings %}
+  <div class="table-wrapper">
+    <table class="findings-table" id="findings-table">
+      <colgroup>
+        <col style="width:40px">
+        <col style="width:90px">
+        <col style="width:130px">
+        <col style="width:180px">
+        <col style="width:120px">
+        <col style="width:160px">
+        <col style="width:130px">
+        <col style="width:340px">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th class="sortable resizable" data-col="1">Severity<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="2">Rule ID<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="3">Title<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="4">Host<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="5">Timestamp<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="6">Source<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="7">Message<span class="col-resize-handle"></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for finding in result.findings %}
+        <tr class="finding-row" data-index="{{ loop.index }}">
+          <td>{{ loop.index }}</td>
+          <td><span class="badge badge--{{ finding.severity | lower }}">{{ finding.severity }}</span></td>
+          <td class="mono">{{ finding.rule_id }}</td>
+          <td>{{ finding.title }}</td>
+          <td class="mono">{{ finding.host or '—' }}</td>
+          <td class="mono">{{ finding.timestamp or '—' }}</td>
+          <td class="mono truncate" title="{{ finding.source }}">{{ finding.source | basename }}</td>
+          <td class="message-cell">{{ finding.message }}</td>
+        </tr>
+        {% if finding.fields %}
+        <tr class="fields-row" id="fields-{{ loop.index }}" style="display:none;">
+          <td colspan="8">
+            <div class="fields-detail">
+              <strong>Additional Fields:</strong>
+              <table class="fields-table">
+                {% for key, value in finding.fields.items() | sort %}
+                <tr><td class="field-key">{{ key }}</td><td>{{ value }}</td></tr>
+                {% endfor %}
+              </table>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="hint">Click a column header to sort. Click a row to expand additional fields.</p>
+  {% else %}
+  <p class="empty">No findings detected.</p>
+  {% endif %}
+</div>
+
+<!-- Errors section — collapsed by default; only rendered when the pipeline
+     recorded at least one error of any category -->
+{% if result.has_errors() %}
+<div class="section" id="errors-section">
+  <details>
+    <summary class="errors-summary">
+      Errors
+      ({{ result.total_file_errors() + result.total_parser_errors() + result.total_normalization_errors() + result.total_detection_errors() }})
+    </summary>
+
+    {% if result.file_errors %}
+    <h3>File Errors</h3>
+    <table class="error-table">
+      <thead><tr><th>Source</th><th>Stage</th><th>Error</th></tr></thead>
+      <tbody>
+        {% for e in result.file_errors %}
+        <tr><td class="mono">{{ e.source }}</td><td>{{ e.stage }}</td><td>{{ e.error }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    {% if result.parser_errors %}
+    <h3>Parser Errors</h3>
+    <table class="error-table">
+      <thead><tr><th>Source</th><th>Line</th><th>Parser</th><th>Error</th></tr></thead>
+      <tbody>
+        {% for e in result.parser_errors %}
+        {% set ev = e.event %}
+        <tr>
+          <td class="mono">{{ e.source }}</td>
+          <td>{{ ev.line_number if ev else '—' }}</td>
+          <td>{{ ev.parser_type if ev else '—' }}</td>
+          <td>{{ ev.error if ev else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    {% if result.normalization_errors %}
+    <h3>Normalization Errors</h3>
+    <table class="error-table">
+      <thead><tr><th>Source</th><th>Stage</th><th>Error</th></tr></thead>
+      <tbody>
+        {% for e in result.normalization_errors %}
+        <tr><td class="mono">{{ e.source }}</td><td>{{ e.stage }}</td><td>{{ e.error }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    {% if result.detection_errors %}
+    <h3>Detection Errors</h3>
+    <table class="error-table">
+      <thead><tr><th>Source</th><th>Stage</th><th>Error</th></tr></thead>
+      <tbody>
+        {% for e in result.detection_errors %}
+        <tr><td class="mono">{{ e.source }}</td><td>{{ e.stage }}</td><td>{{ e.error }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+  </details>
+</div>
+{% endif %}
+
+<script>
+// ── Stat card interactions ──────────────────────────────────────────
+(function () {
+  document.querySelectorAll(".stat-card[data-drawer]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var targetId = btn.getAttribute("data-drawer");
+      var drawer   = document.getElementById(targetId);
+      if (!drawer) return;
+      var isOpen = !drawer.hidden;
+      // Close all drawers first
+      document.querySelectorAll(".stat-drawer").forEach(function (d) {
+        d.hidden = true;
+      });
+      document.querySelectorAll(".stat-card").forEach(function (c) {
+        c.classList.remove("stat-card--active");
+      });
+      if (!isOpen) {
+        drawer.hidden = false;
+        btn.classList.add("stat-card--active");
+        drawer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    });
+  });
+
+  document.querySelectorAll(".stat-card[data-scroll]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var targetId = btn.getAttribute("data-scroll");
+      var target   = document.getElementById(targetId);
+      if (!target) return;
+      // Ensure the errors <details> element is open before scrolling to it.
+      var details = target.querySelector("details");
+      if (details) details.open = true;
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}());
+
+// ── Column visibility ──────────────────────────────────────────────
+(function () {
+  var btn      = document.getElementById("col-toggle-btn");
+  var dropdown = document.getElementById("col-toggle-dropdown");
+  var table    = document.getElementById("findings-table");
+  if (!btn || !dropdown || !table) return;
+
+  var cols = table.querySelectorAll("colgroup col");
+
+  // Return all th + td cells for a given col index (matching data-col-hide)
+  function colCells(n) {
+    var pos = n + 1;  // nth-child is 1-based
+    return Array.from(table.querySelectorAll(
+      "thead th:nth-child(" + pos + "), tbody td:nth-child(" + pos + ")"
+    ));
+  }
+
+  // Toggle dropdown open/close
+  btn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    var open = !dropdown.hidden;
+    dropdown.hidden = open;
+    btn.setAttribute("aria-expanded", String(!open));
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!dropdown.hidden && !dropdown.contains(e.target) && e.target !== btn) {
+      dropdown.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  dropdown.querySelectorAll("input[type=checkbox]").forEach(function (cb) {
+    cb.addEventListener("change", function () {
+      var n   = parseInt(cb.getAttribute("data-col-hide"), 10);
+      var col = cols[n];
+
+      if (cb.checked) {
+        // Restore: remove collapse, unhide cells
+        if (col) col.style.visibility = "";
+        colCells(n).forEach(function (cell) { cell.style.display = ""; });
+      } else {
+        // Collapse the col element to remove it from the layout without
+        // discarding its width, and hide cells as a secondary safeguard.
+        if (col) col.style.visibility = "collapse";
+        colCells(n).forEach(function (cell) { cell.style.display = "none"; });
+      }
+    });
+  });
+}());
+
+// ── Column resize & double-click auto-fit ─────────────────────────
+(function () {
+  var table = document.getElementById("findings-table");
+  if (!table) return;
+
+  var cols     = table.querySelectorAll("colgroup col");
+  var dragging = false;
+
+  // Measure the natural (no-wrap) width of a column's content
+  function fitColumnWidth(thIndex) {
+    var cellIndex = thIndex + 1;  // nth-child is 1-based
+    var cells = Array.from(table.querySelectorAll(
+      "thead th:nth-child(" + cellIndex + "), tbody td:nth-child(" + cellIndex + ")"
+    ));
+
+    // Use a hidden measuring span with matching font and cell padding
+    var measurer = document.createElement("span");
+    measurer.style.cssText = "position:absolute;top:-9999px;left:-9999px;visibility:hidden;" +
+                             "white-space:nowrap;font:inherit;padding:0 0.9rem;";
+    var refCell = cells[0] || table;
+    measurer.style.font = window.getComputedStyle(refCell).font;
+    document.body.appendChild(measurer);
+
+    var maxW = 40;
+    cells.forEach(function (cell) {
+      measurer.textContent = cell.textContent.trim();
+      maxW = Math.max(maxW, measurer.offsetWidth);
+    });
+
+    document.body.removeChild(measurer);
+    return maxW;
+  }
+
+  table.querySelectorAll("th.resizable").forEach(function (th) {
+    var handle = th.querySelector(".col-resize-handle");
+    if (!handle) return;
+
+    var thIndex = Array.from(th.parentElement.children).indexOf(th);
+    var col     = cols[thIndex];
+    var startX, startW;
+
+    // Drag to resize
+    handle.addEventListener("mousedown", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      dragging = true;
+      startX   = e.clientX;
+      startW   = col.getBoundingClientRect().width;
+      document.body.classList.add("col-resizing");
+    });
+
+    document.addEventListener("mousemove", function (e) {
+      if (!dragging) return;
+      col.style.width = Math.max(40, startW + (e.clientX - startX)) + "px";
+    });
+
+    document.addEventListener("mouseup", function () {
+      if (!dragging) return;
+      dragging = false;
+      document.body.classList.remove("col-resizing");
+    });
+
+    // Double-click handle → auto-fit to content
+    handle.addEventListener("dblclick", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      col.style.width = fitColumnWidth(thIndex) + "px";
+    });
+  });
+}());
+
+// ── Table sort ─────────────────────────────────────────────────────
+(function () {
+  var SEVERITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3, info: 4, unknown: 5 };
+  var sortState = { col: null, dir: 1 };
+
+  var table = document.querySelector(".findings-table");
+  if (!table) return;
+
+  var tbody  = table.querySelector("tbody");
+  var headers = Array.from(table.querySelectorAll("thead th"));
+
+  // ── Row expand via delegation (survives DOM reorder) ──────────────
+  tbody.addEventListener("click", function (e) {
+    var row = e.target.closest(".finding-row");
+    if (!row) return;
+    var next = row.nextElementSibling;
+    if (next && next.classList.contains("fields-row")) {
+      next.style.display = next.style.display === "none" ? "table-row" : "none";
+    }
+  });
+
+  // ── Collect (finding-row, optional fields-row) pairs ─────────────
+  function getGroups() {
+    var rows   = Array.from(tbody.children);
+    var groups = [];
+    var i = 0;
+    while (i < rows.length) {
+      var row = rows[i];
+      if (row.classList.contains("finding-row")) {
+        var group = [row];
+        var next  = rows[i + 1];
+        if (next && next.classList.contains("fields-row")) {
+          group.push(next);
+          i += 2;
+        } else {
+          i += 1;
+        }
+        groups.push(group);
+      } else {
+        i += 1;
+      }
+    }
+    return groups;
+  }
+
+  // ── Get sortable text value from a cell ───────────────────────────
+  function cellValue(findingRow, colIndex) {
+    var cells = findingRow.querySelectorAll("td");
+    if (!cells[colIndex]) return "";
+    if (colIndex === 1) {
+      var badge = cells[colIndex].querySelector(".badge");
+      return badge ? badge.textContent.trim().toLowerCase() : "";
+    }
+    return cells[colIndex].textContent.trim().toLowerCase();
+  }
+
+  // ── Compare two cell values ───────────────────────────────────────
+  function compare(a, b, colIndex) {
+    if (colIndex === 1) {
+      var ao = SEVERITY_ORDER[a] !== undefined ? SEVERITY_ORDER[a] : 99;
+      var bo = SEVERITY_ORDER[b] !== undefined ? SEVERITY_ORDER[b] : 99;
+      return ao - bo;
+    }
+    return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+  }
+
+  // ── Sort and re-insert ────────────────────────────────────────────
+  function sortTable(colIndex, dir) {
+    var groups = getGroups();
+    groups.sort(function (ga, gb) {
+      var a = cellValue(ga[0], colIndex);
+      var b = cellValue(gb[0], colIndex);
+      return dir * compare(a, b, colIndex);
+    });
+    groups.forEach(function (group, newIdx) {
+      group.forEach(function (row) { tbody.appendChild(row); });
+      // Keep # column in sync with visual position
+      var numCell = group[0].querySelector("td:first-child");
+      if (numCell) numCell.textContent = newIdx + 1;
+    });
+  }
+
+  // ── Update header sort indicators ─────────────────────────────────
+  function updateHeaders(activeCol, dir) {
+    headers.forEach(function (th) { th.removeAttribute("data-sort"); });
+    headers[activeCol].setAttribute("data-sort", dir === 1 ? "asc" : "desc");
+  }
+
+  // ── Wire up sortable headers ──────────────────────────────────────
+  headers.forEach(function (th) {
+    if (!th.classList.contains("sortable")) return;
+    var colIndex = parseInt(th.getAttribute("data-col"), 10);
+    th.addEventListener("click", function (e) {
+      if (e.target.classList.contains("col-resize-handle")) return;
+      if (sortState.col === colIndex) {
+        sortState.dir *= -1;
+      } else {
+        sortState.col = colIndex;
+        sortState.dir = 1;
+      }
+      sortTable(colIndex, sortState.dir);
+      updateHeaders(colIndex, sortState.dir);
+    });
+  });
+}());
+</script>
+
+{% endblock %}

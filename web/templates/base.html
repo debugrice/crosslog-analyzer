@@ -1,0 +1,30 @@
+<!--
+    base.html
+    Shared base layout for all CrossLog Analyzer pages.
+
+    Defines the HTML document structure, loads the stylesheet, and provides
+    a top navigation bar. Child templates extend this file and inject their
+    content into the 'content' block.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrossLog Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- Top navigation bar -->
+  <nav class="navbar">
+    <a class="nav-brand" href="/">CrossLog Analyzer</a>
+  </nav>
+
+  <!-- Page-level content injected by child templates -->
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+</body>
+</html>
