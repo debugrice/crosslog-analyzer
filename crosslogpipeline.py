@@ -4,6 +4,7 @@ from config import CrossLogPipelineConfig
 from models.run_result import RunResult
 from models.parsed_event import ParsedEvent, ParserErrorEvent
 from normalizer.normalize import normalize_event
+from normalizer.auditd_aggregator import AuditdEventAggregator
 from detection.engine import detect
 
 class CrossLogPipeline:
@@ -25,7 +26,7 @@ class CrossLogPipeline:
          
         # Main loop to check every log file discovered       
         for file_path in files:
-            # Process each file from the list.
+            # Process each file from the list
             self._process_file(file_path=file_path,result=result)
         
             # Terminate the application if the user selected fast break
@@ -42,13 +43,13 @@ class CrossLogPipeline:
             result (RunResult): Results for this run. Pass-by reference. 
         """
         try:
-            # Determine the parser from the input or by the user.
+            # Determine the parser from the input or by the user
             parser = get_parser_for_file(
                 file_path=file_path,
                 forced_format=self.config.input_format) 
             
         except Exception as exc:
-            # Logs the file error if the method fails to select the parser.
+            # Logs the file error if the method fails to select the parser
             result.add_file_error(
                 source=str(file_path),
                 stage="parser_selection",
@@ -57,10 +58,15 @@ class CrossLogPipeline:
             result.fatal_errors += 1
             return
         
-        # Increment the number of files processed.
+        # Increment the number of files processed
         result.files_processed += 1
+
+        # Audit parsing needs multiple entries
+        auditd_aggregator = None
+        if getattr(parser, "parser_type", None) == "auditd":
+            auditd_aggregator = AuditdEventAggregator()
         
-        # Parser will loop thru the file and extract findings.
+        # Parser will loop thru the file and extract findings
         for parser_event in parser.parse_file(file_path):
             # If this is a ParserErrorEvent add it to the list of errors
             if isinstance(parser_event, ParserErrorEvent):
@@ -69,13 +75,22 @@ class CrossLogPipeline:
                     event=parser_event,
                 )
                 
-                # No reason to keep going; this event is done.
+                # No reason to keep going; this event is done
                 continue
             
             try:
-                # Normalize the parser event message.
-                event = normalize_event(parser_event)
-                # Add the normalized event to the list.
+                # if parsing audit logs, it has to be a group of events
+                if auditd_aggregator is not None:
+                    grouped_event = auditd_aggregator.process(parser_event)
+                    if grouped_event is None:
+                        continue
+                    # After all the events for the specific audit id
+                    event = normalize_event(grouped_event)
+                else:
+                    # Standard event normalizer
+                    event = normalize_event(parser_event)
+
+                # Add the normalized event to the list
                 result.normalized_events.append(event)
             except Exception as exc:
                 result.add_normalization_error(
@@ -85,17 +100,17 @@ class CrossLogPipeline:
                     event=parser_event,
                 )
                 
-                # Break out if the fail_fast is set.
+                # Break out if the fail_fast is set
                 if self.config.fail_fast:
                     result.fatal_errors += 1
                     return
-                # No reason to keep going; this event is done.
+                # No reason to keep going; this event is done
                 continue
             
             try:
-                # Attempt to detect findings from the normalized event.
+                # Attempt to detect findings from the normalized event
                 finding = detect(event)
-                # If not None, then add it to the results findings.
+                # If not None, then add it to the results findings
                 if finding:
                     result.findings.extend(finding)
             except Exception as exc:
@@ -106,11 +121,31 @@ class CrossLogPipeline:
                     event=event,
                 )
                 
-                # Break out if the fail_fast is set.                
+                # Break out if the fail_fast is set                
                 if self.config.fail_fast:
                     result.fatal_errors += 1
                     return
-                
-            
-            
-        
+        # If parsing an audit file, the remaining buffered auditd records must be flushed
+        if auditd_aggregator is not None:
+            try:
+                # Collect the remaining messages
+                grouped_event = auditd_aggregator.flush()
+                if grouped_event is not None:
+                    event = normalize_event(grouped_event)
+                    result.normalized_events.append(event)
+
+                    finding = detect(event)
+                    if finding:
+                        result.findings.extend(finding)
+
+            except Exception as exc:
+                result.add_normalization_error(
+                    source=str(file_path),
+                    stage="auditd_flush",
+                    error=str(exc),
+                    event=None,
+                )
+
+                if self.config.fail_fast:
+                    result.fatal_errors += 1
+                    return
