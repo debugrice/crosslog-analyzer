@@ -1,11 +1,11 @@
 
+from models.audit_event import AuditdMergedEvent
 from models.event import Event
 from models.parsed_event import ParsedEvent
-from normalizer.time import normalize_timestamp
-from normalizer.helpers import *
 from normalizer.auth import enrich_auth_fields
+from normalizer.helpers import *
+from normalizer.time import normalize_timestamp
 
-from models.audit_event import AuditdMergedEvent
 
 def normalize_event(parser_event) -> Event:
     """Generic function used to normalize AuditMergedEvents and single parsed events
