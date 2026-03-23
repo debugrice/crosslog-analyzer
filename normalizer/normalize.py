@@ -206,6 +206,7 @@ def normalize_auditd_grouped_event(grouped_event: AuditdMergedEvent) -> Event:
             fields={
                 "audit_id": grouped_event.audit_id,
                 "record_count": len(grouped_event.records),
+                **first.fields
             },
         )
 
