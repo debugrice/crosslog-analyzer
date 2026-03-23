@@ -131,6 +131,7 @@ def forced_parser(forced_format:str) -> None:
     # List of available parsers
     # TODO Update as new parsers are added
     parser_map = {
+        "auditd" : AuditParser,
         "rfc3164": RFC3164Parser,
         "rfc5424": RFC5424Parser,
         "evtx": EvtxParser,
