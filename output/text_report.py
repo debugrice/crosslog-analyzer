@@ -1,8 +1,10 @@
 
 
 from collections import Counter
-from models.run_result import RunResult
 from pathlib import Path
+
+from models.run_result import RunResult
+
 
 def write_summary_report(result: RunResult, output_path: Path) -> None:
     """Function generates the summary file.

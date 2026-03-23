@@ -1,0 +1,25 @@
+type=SYSCALL msg=audit(1710873452.123:420): arch=c000003e syscall=2 success=no exit=-13 a0=7ffd5c3a9b2a a1=0 a2=1b6 a3=0 items=1 ppid=2456 pid=3124 auid=1001 uid=1001 gid=1001 euid=1001 tty=pts0 ses=3 comm="less" exe="/usr/bin/less" key="shadow-access"
+type=CWD msg=audit(1710873452.123:420): cwd="/home/user1"
+type=PATH msg=audit(1710873452.123:420): item=0 name="/etc/shadow" inode=123456 dev=fd:00 mode=0100400 ouid=0 ogid=0 rdev=00:00 objtype=NORMAL
+type=PROCTITLE msg=audit(1710873452.123:420): proctitle=636174002F6574632F736861646F77
+
+type=SYSCALL msg=audit(1710873452.456:421): arch=c000003e syscall=59 success=yes exit=0 a0=55c8f8b2a0 a1=55c8f8b2b0 a2=55c8f8b2c0 a3=0 items=0 ppid=3124 pid=3150 auid=1001 uid=1001 gid=1001 euid=1001 tty=pts0 ses=3 comm="ls" exe="/usr/bin/ls" key="exec"
+type=PROCTITLE msg=audit(1710873452.456:421): proctitle=6C73002D6C
+
+type=SYSCALL msg=audit(1710873453.001:422): arch=c000003e syscall=2 success=yes exit=3 a0=7ffd5c3a9b2a a1=0 a2=1b6 a3=0 items=1 ppid=3150 pid=3188 auid=1001 uid=1001 gid=1001 euid=0 tty=pts0 ses=3 comm="cat" exe="/usr/bin/cat" key="passwd-access"
+type=CWD msg=audit(1710873453.001:422): cwd="/home/user1"
+type=PATH msg=audit(1710873453.001:422): item=0 name="/etc/passwd" inode=654321 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 objtype=NORMAL
+type=PROCTITLE msg=audit(1710873453.001:422): proctitle=636174002F6574632F706173737764
+
+type=SYSCALL msg=audit(1710873454.222:423): arch=c000003e syscall=42 success=yes exit=0 a0=3 a1=7ffd5c3a9b2a a2=10 a3=0 items=0 ppid=3188 pid=3200 auid=1001 uid=1001 gid=1001 euid=1001 tty=pts0 ses=3 comm="curl" exe="/usr/bin/curl" key="network"
+type=PROCTITLE msg=audit(1710873454.222:423): proctitle=6375726C00687474703A2F2F6578616D706C652E636F6D
+
+type=SYSCALL msg=audit(1710874001.321:500): arch=c000003e syscall=59 success=yes exit=0 a0=55c8f8b2a0 a1=55c8f8b2b0 a2=55c8f8b2c0 a3=0 items=1 ppid=2456 pid=4001 auid=1001 uid=1001 gid=1001 euid=1001 tty=pts0 ses=4 comm="bash" exe="/usr/bin/bash" key="exec"
+type=EXECVE msg=audit(1710874001.321:500): argc=3 a0="cat" a1="/etc/passwd" a2="-n"
+type=CWD msg=audit(1710874001.321:500): cwd="/home/user1"
+type=PATH msg=audit(1710874001.321:500): item=0 name="/usr/bin/cat" inode=112233 dev=fd:00 mode=0100755 ouid=0 ogid=0 rdev=00:00 objtype=NORMAL
+type=PROCTITLE msg=audit(1710874001.321:500): proctitle=636174002F6574632F706173737764002D6E
+
+type=SYSCALL msg=audit(1710874100.111:501): arch=c000003e syscall=59 success=yes pid=4100 uid=1001 euid=0 comm="sudo" exe="/usr/bin/sudo"
+type=EXECVE msg=audit(1710874100.111:501): argc=2 a0="sudo" a1="cat /etc/shadow"
+type=PROCTITLE msg=audit(1710874100.111:501): proctitle=7375646F00636174202F6574632F736861646F77

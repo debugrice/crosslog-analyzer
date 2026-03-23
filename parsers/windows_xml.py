@@ -74,6 +74,8 @@ class WindowsXmlParser:
         provider = None
         event_id = None
         channel = None
+        pid     = None
+        thread  = None
         fields = {}
 
         # Use the namespace to extract the necessary data from the Windows XML Log file.
@@ -101,6 +103,13 @@ class WindowsXmlParser:
             time_el = system.find("e:TimeCreated", ns)
             if time_el is not None:
                 timestamp = time_el.attrib.get("SystemTime")
+                
+            execution_el = system.find("e:Execution", ns)
+            # Find the Process ID
+            #NOTE Should we be handle the thread id as well
+            if execution_el is not None:
+                pid = execution_el.attrib.get("ProcessID")
+                thread = execution_el.attrib.get("ThreadID")
 
         if event_data is not None:
             for data_el in event_data.findall("e:Data", ns):
@@ -115,12 +124,13 @@ class WindowsXmlParser:
             timestamp=timestamp,
             host=host,
             program=provider,
-            pid=None,
+            pid=pid,
             message=f"Windows Event ID {event_id}" if event_id is not None else "Windows Event",
             event_id=event_id,
             fields={
                 "channel": channel,
                 "record_number": record_number,
+                "ThreadID": thread,
                 **fields,
             },
         )    
