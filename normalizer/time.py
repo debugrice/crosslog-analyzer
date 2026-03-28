@@ -26,6 +26,8 @@ def normalize_timestamp( raw_timestamp: str | None,
         return 
     if parser_type == "auditd":
         return _normalized_audit(raw_timestamp, default_tz)
+    if parser_type == "journal":
+        return _normalized_journal(raw_timestamp, default_tz)
     if parser_type == "rfc3164":
         return _normalize_rfc3164(raw_timestamp, default_tz, reference_year)
     if parser_type == "rfc5424":
@@ -48,6 +50,25 @@ def _normalized_audit(raw_timestamp: str, default_tz: str) -> str:
     timezone = ZoneInfo(default_tz)
     dt = datetime.fromtimestamp(float(raw_timestamp), tz=timezone)
     
+    return dt.isoformat(timespec="milliseconds").replace("+00:00", "Z")
+
+def _normalized_journal(raw_timestamp: str, 
+                       default_tz: str ) -> str:
+    """Function used to normalize the timestamp for journal log entries
+
+    Args:
+        raw_timestamp (str): raw timestamp extracted from event message
+        default_tz (str): Default timezone set to the UTC
+
+    Returns:
+        str: String formatted ISO8601 timestamp
+    """
+    value = raw_timestamp.strip()
+    
+    # timestamp should be formatted correctly
+    dt = datetime.fromisoformat(value)
+    
+    # return the ISO 8061 timestamp
     return dt.isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 def _normalize_rfc3164(raw_timestamp: str, 

@@ -82,6 +82,47 @@ def determine_category(parsed_event) -> str | None:
             if prog in { "auditd" }:
                 return "kernel-level"
 
+    if parsed_event.parser_type in {"journal"}:
+        if parsed_event.program:
+            prog = parsed_event.program.lower()
+            if prog in {"kernel"}:
+                return "kernel-level"
+            elif prog in { "audit" }:
+                return "audit"
+            elif prog in { "snapd-apparmor","apparmor.systemd" }:
+                return "appaarmor"
+            elif prog in { "cloud-init", "dbus-daemon", "lvm", 
+                          "multipathd", "udisks2.service", "apport",
+                          "rsyslogd", "modemmanager", "networkd-dispatcher",
+                          "systemd-hostnamed", "etcd.etcd",
+                          "systemd", "systemd-journald", 
+                          "systemd-modules-load", "systemd-udevd",
+                          "systemd-fsck", "systemd-networkd",
+                          "systemd-resolve", "systemd-timesyncd",
+                          "systemd-resolved", "systemd-networkd-wait-online",
+                          "pollinate", "blkdeactivate" , "systemd-tmpfiles",
+                          "finalrd", "systemd-shutdown", "chfn", 
+                          "systemd-random-seed" }:
+                return "system"
+            elif prog in { "cron", "podman", "snapd", 
+                          "lxd.activate", "docker.dockerd",
+                          "packagekit", "dbus-send",
+                          "docker.nvidia-container-toolkit", "docker" }:
+                return "execution"
+            elif prog in { "polkitd" }:
+                return "authorization"
+            elif prog in { "sshd", "systemd-logind", "login" }:
+                return "authentication"
+            elif prog in { "useradd", "usermod", "chage", 
+                          "groupadd" }:
+                return "persistence"
+            elif prog in { "sudo", "su" }:
+                return "privilege_escalation"
+            elif prog in {"passwd" }:
+                return "credential_access"
+            else:
+                return "unknown"
+
     if parsed_event.parser_type in {"evtx", "windows_xml"}:
         # TODO More categories will need to be added.
         if parsed_event.event_id in {4624, 4625, 4634, 4648, 4672, 4740, 4771}:

@@ -1,12 +1,14 @@
 
 import re
 import gzip
+import json
 from pathlib import Path
 from parsers.windows_evtx import EvtxParser
 from parsers.windows_xml import WindowsXmlParser
 from parsers.rfc3164 import RFC3164Parser
 from parsers.rfc5424 import RFC5424Parser
 from parsers.audit_parser import AuditParser
+from parsers.journal_parser import JournalParser
 
 # Regex string object for identifying RFC 3164 and RFC 5424
 # TODO Additional text based parsers should have matching patterns
@@ -47,6 +49,36 @@ def check_for_audit(line: str) -> bool:
         bool: True - string matches the audit format; False - string does not match
     """
     return bool(AUDIT_RE.match(line))
+
+def check_for_journal_json(line: str) -> bool:
+    """Helper function used to determine if the string line is journal json.
+
+    Args:
+        line (str): String extracted from the file.
+
+    Returns:
+        bool: True, the line is journal json; False otherwise
+    """
+    # Opening and closing brackets are required for json
+    if not (line.startswith("{") and line.endswith("}")):
+        return False
+
+    try:
+        data = json.loads(line)
+    except json.JSONDecodeError:
+        return False
+
+    if not isinstance(data, dict):
+        return False
+
+    # Final check is to verify the json is journal log
+    # TODO - Verify this does not cause a bug
+    return (
+        "__REALTIME_TIMESTAMP" in data
+        or "MESSAGE" in data
+        or "_SYSTEMD_UNIT" in data
+        or "SYSLOG_IDENTIFIER" in data
+    )
 
 def check_for_windows_event_xml(file_path):
     """Function used to check if the file matches the Windows XML event type.
@@ -111,6 +143,8 @@ def get_parser_for_file(file_path: Path, forced_format: str="auto") -> None:
             return AuditParser()
         if check_for_rfc5424(first_line):
             return RFC5424Parser()
+        if check_for_journal_json(first_line):
+            return JournalParser()
         if check_for_rfc3164(first_line):
             return RFC3164Parser()
         
@@ -134,6 +168,7 @@ def forced_parser(forced_format:str) -> None:
         "auditd" : AuditParser,
         "rfc3164": RFC3164Parser,
         "rfc5424": RFC5424Parser,
+        "journal" : JournalParser,
         "evtx": EvtxParser,
         "xml": WindowsXmlParser,
     }

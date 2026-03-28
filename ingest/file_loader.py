@@ -9,7 +9,8 @@ SUPPORTED_EXTENSIONS = {
     ".txt",
     ".evtx",
     ".xml",
-    ".gz"
+    ".gz",
+    ".json"
 }
 
 def discover_input_files( input_paths: Iterable[Path],
