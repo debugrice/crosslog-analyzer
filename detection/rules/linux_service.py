@@ -84,8 +84,8 @@ def detect_systemd_service_stopped(event: Event) -> Finding | None:
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
-        mitre_tactic_id="TA0003",
-        mitre_tactic_name="Persistence",
+        mitre_tactic_id="TA0040",
+        mitre_tactic_name="Impact",
     )
 
 
@@ -103,7 +103,7 @@ def detect_systemd_service_failed(event: Event) -> Finding | None:
     """
     if event.program != "systemd":
         return None
-    if "failed" not in (event.message or "").lower():
+    if not (event.message or "").lower().startswith("failed"):
         return None
 
     unit = _extract_unit(event.message)
@@ -112,7 +112,7 @@ def detect_systemd_service_failed(event: Event) -> Finding | None:
     return Finding(
         rule_id="LINUX-SERVICE-FAILED",
         title=title,
-        severity="high",
+        severity="medium",
         category="service_management",
         source=event.source,
         timestamp=event.timestamp,
@@ -120,8 +120,8 @@ def detect_systemd_service_failed(event: Event) -> Finding | None:
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
-        mitre_tactic_id="TA0003",
-        mitre_tactic_name="Persistence",
+        mitre_tactic_id="TA0040",
+        mitre_tactic_name="Impact",
     )
 
 

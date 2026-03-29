@@ -76,8 +76,8 @@ def detect_sensitive_file_access(event: Event) -> Finding | None:
         event_type=event_type,
         message=message,
         fields=dict(event.fields),
-        mitre_tactic_id="TA0009",
-        mitre_tactic_name="Collection",
+        mitre_tactic_id="TA0006",
+        mitre_tactic_name="Credential Access",
     )
 
 RULES = [
