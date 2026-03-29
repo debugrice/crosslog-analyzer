@@ -101,6 +101,14 @@ def analyze():
         severity_rows  = [(s, severity_counts.get(s, 0)) for s in severity_order if severity_counts.get(s, 0)]
         category_rows  = sorted(category_counts.items())
 
+        # Aggregate findings by MITRE tactic, keyed as (tactic_id, tactic_name) pairs.
+        mitre_tactic_counts = Counter(
+            (f.mitre_tactic_id or "", f.mitre_tactic_name or "")
+            for f in result.findings
+            if f.mitre_tactic_id
+        )
+        mitre_tactic_rows = sorted(mitre_tactic_counts.items())
+
         # Build per-file summary rows for the Files Processed and Events Parsed stat card drawers.
         events_by_source   = Counter(e.source for e in result.normalized_events)
         parser_by_source   = {e.source: e.parser_type for e in result.normalized_events}
@@ -129,6 +137,7 @@ def analyze():
             result=result,
             severity_rows=severity_rows,
             category_rows=category_rows,
+            mitre_tactic_rows=mitre_tactic_rows,
             file_rows=file_rows,
             error_breakdown=error_breakdown,
         )

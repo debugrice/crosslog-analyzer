@@ -247,6 +247,34 @@ select:focus {
 .badge--info     { background: #1a365d; color: #90cdf4; }
 .badge--unknown  { background: #2d3748; color: #a0aec0; }
 
+/* ── MITRE ATT&CK Tactic badges ───────────────────────────────────── */
+/* ID badge: monospace code style, deep purple — distinct from all severity colours */
+.badge--mitre-id {
+  background: #2d1f52;
+  color: #c4b5fd;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.08em;
+  border: 1px solid #4c3690;
+}
+
+/* Name badge: complementary label, readable mixed-case */
+.badge--mitre-name {
+  background: #1e1535;
+  color: #a78bfa;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid #3b2a6e;
+}
+
+/* Pair the two badges with a tight gap when they appear together */
+.mitre-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: nowrap;
+}
+
 /* ── Section ──────────────────────────────────────────────────────── */
 .section {
   margin-bottom: 2rem;

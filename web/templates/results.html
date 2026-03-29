@@ -3,10 +3,11 @@
     Analysis results dashboard for CrossLog Analyzer.
 
     Displays a summary of the pipeline run including per-file statistics,
-    findings broken down by severity and category, a sortable and configurable
-    findings table, and a collapsible error report. All interactive behaviour
-    (stat card drawers, column sorting, resizing, and visibility) is handled
-    by the inline script block at the bottom of this template.
+    findings broken down by severity, category, and MITRE tactic, a sortable
+    and configurable findings table, and a collapsible error report. All
+    interactive behaviour (stat card drawers, column sorting, resizing, and
+    visibility) is handled by the inline script block at the bottom of this
+    template.
 -->
 {% extends "base.html" %}
 {% block content %}
@@ -89,7 +90,7 @@
   </div>
 </div>
 
-{% if severity_rows or category_rows %}
+{% if severity_rows or category_rows or mitre_tactic_rows %}
 <div class="breakdown-grid">
 
   {% if severity_rows %}
@@ -123,6 +124,28 @@
   </div>
   {% endif %}
 
+  {% if mitre_tactic_rows %}
+  <div class="breakdown-card">
+    <h2>Findings by MITRE Tactic</h2>
+    <table class="breakdown-table">
+      <thead><tr><th>Tactic</th><th>Count</th></tr></thead>
+      <tbody>
+        {% for (tactic_id, tactic_name), count in mitre_tactic_rows %}
+        <tr>
+          <td>
+            <div class="mitre-cell">
+              <span class="badge badge--mitre-id">{{ tactic_id }}</span>
+              <span class="badge badge--mitre-name">{{ tactic_name }}</span>
+            </div>
+          </td>
+          <td>{{ count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
 </div>
 {% endif %}
 
@@ -140,10 +163,11 @@
         <label><input type="checkbox" data-col-hide="1" checked> Severity</label>
         <label><input type="checkbox" data-col-hide="2" checked> Rule ID</label>
         <label><input type="checkbox" data-col-hide="3" checked> Title</label>
-        <label><input type="checkbox" data-col-hide="4" checked> Host</label>
-        <label><input type="checkbox" data-col-hide="5" checked> Timestamp</label>
-        <label><input type="checkbox" data-col-hide="6" checked> Source</label>
-        <label><input type="checkbox" data-col-hide="7" checked> Message</label>
+        <label><input type="checkbox" data-col-hide="4" checked> MITRE Tactic</label>
+        <label><input type="checkbox" data-col-hide="5" checked> Host</label>
+        <label><input type="checkbox" data-col-hide="6" checked> Timestamp</label>
+        <label><input type="checkbox" data-col-hide="7" checked> Source</label>
+        <label><input type="checkbox" data-col-hide="8" checked> Message</label>
       </div>
     </div>
     {% endif %}
@@ -156,6 +180,7 @@
         <col style="width:90px">
         <col style="width:130px">
         <col style="width:180px">
+        <col style="width:195px">
         <col style="width:120px">
         <col style="width:160px">
         <col style="width:130px">
@@ -167,10 +192,11 @@
           <th class="sortable resizable" data-col="1">Severity<span class="col-resize-handle"></span></th>
           <th class="sortable resizable" data-col="2">Rule ID<span class="col-resize-handle"></span></th>
           <th class="sortable resizable" data-col="3">Title<span class="col-resize-handle"></span></th>
-          <th class="sortable resizable" data-col="4">Host<span class="col-resize-handle"></span></th>
-          <th class="sortable resizable" data-col="5">Timestamp<span class="col-resize-handle"></span></th>
-          <th class="sortable resizable" data-col="6">Source<span class="col-resize-handle"></span></th>
-          <th class="sortable resizable" data-col="7">Message<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="4">MITRE Tactic<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="5">Host<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="6">Timestamp<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="7">Source<span class="col-resize-handle"></span></th>
+          <th class="sortable resizable" data-col="8">Message<span class="col-resize-handle"></span></th>
         </tr>
       </thead>
       <tbody>
@@ -180,6 +206,16 @@
           <td><span class="badge badge--{{ finding.severity | lower }}">{{ finding.severity }}</span></td>
           <td class="mono">{{ finding.rule_id }}</td>
           <td>{{ finding.title }}</td>
+          <td>
+            {% if finding.mitre_tactic_id %}
+            <div class="mitre-cell">
+              <span class="badge badge--mitre-id">{{ finding.mitre_tactic_id }}</span>
+              <span class="badge badge--mitre-name">{{ finding.mitre_tactic_name }}</span>
+            </div>
+            {% else %}
+            <span class="empty">—</span>
+            {% endif %}
+          </td>
           <td class="mono">{{ finding.host or '—' }}</td>
           <td class="mono">{{ finding.timestamp or '—' }}</td>
           <td class="mono truncate" title="{{ finding.source }}">{{ finding.source | basename }}</td>
@@ -187,7 +223,7 @@
         </tr>
         {% if finding.fields %}
         <tr class="fields-row" id="fields-{{ loop.index }}" style="display:none;">
-          <td colspan="8">
+          <td colspan="9">
             <div class="fields-detail">
               <strong>Additional Fields:</strong>
               <table class="fields-table">

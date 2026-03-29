@@ -16,3 +16,5 @@ class Finding:
     event_type: str | None
     message: str
     fields: dict[str, Any] = field(default_factory=dict)
+    mitre_tactic_id: str | None = None    # e.g. "TA0006"
+    mitre_tactic_name: str | None = None  # e.g. "Credential Access"

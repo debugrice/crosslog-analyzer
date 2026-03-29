@@ -30,13 +30,13 @@ def detect_sensitive_file_access(event: Event) -> Finding | None:
     # Must be a ssycall
     if event.fields.get("record_type") != "SYSCALL":
         return None
-    
+
     # Extract the actual syscall value from the event
     syscall = event.fields.get("syscall")
     if syscall not in CHK_SYSCALLS:
         return None
 
-    # 
+    #
     argv = event.fields.get("argv", [])
     paths = event.fields.get("paths", [])
     command_line = event.fields.get("command_line")
@@ -47,7 +47,7 @@ def detect_sensitive_file_access(event: Event) -> Finding | None:
     matched = matched_paths or matched_argv
 
     display_cmd = command_line or program
-    
+
     if not matched:
         return None
 
@@ -55,7 +55,7 @@ def detect_sensitive_file_access(event: Event) -> Finding | None:
     success = event.fields.get("success")
     uid = event.fields.get("uid")
     euid = event.fields.get("euid")
-    
+
     if success == "yes":
         severity = "high"
         event_type = "sensitive_file_access"
@@ -76,8 +76,10 @@ def detect_sensitive_file_access(event: Event) -> Finding | None:
         event_type=event_type,
         message=message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0009",
+        mitre_tactic_name="Collection",
     )
-    
+
 RULES = [
     detect_sensitive_file_access,
 ]

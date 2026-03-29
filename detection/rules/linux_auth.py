@@ -13,7 +13,7 @@ def detect_ssh_failed_password(event):
     # Program check if its from the ssh daemon
     if event.program != "sshd":
         return None
-    
+
     # String lower case the message
     msg = event.message.lower()
 
@@ -32,6 +32,8 @@ def detect_ssh_failed_password(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0006",
+        mitre_tactic_name="Credential Access",
     )
 
 def detect_ssh_success(event):
@@ -65,6 +67,8 @@ def detect_ssh_success(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0001",
+        mitre_tactic_name="Initial Access",
     )
 
 def detect_sudo_usage(event):
@@ -90,6 +94,8 @@ def detect_sudo_usage(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0004",
+        mitre_tactic_name="Privilege Escalation",
     )
 
 def detect_pam_faillock_lockout(event):
@@ -124,9 +130,11 @@ def detect_pam_faillock_lockout(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0006",
+        mitre_tactic_name="Credential Access",
     )
 
-# List of failure patterns for kerberos.    
+# List of failure patterns for kerberos.
 KRB5_FAILURE_PATTERNS = (
     "client_not_found",
     "preauth_failed",
@@ -186,6 +194,8 @@ def detect_kerberos_login_failure(event):
             "auth_protocol": "kerberos",
             "failure_reason": matched_reason,
         },
+        mitre_tactic_id="TA0006",
+        mitre_tactic_name="Credential Access",
     )
 
 # List of rules used for linux authentication detection
