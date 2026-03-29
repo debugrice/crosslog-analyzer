@@ -4,7 +4,7 @@
 Lightweight cross-platform security log analysis tool
 </p>
 
-This project implements the CrossLog Analyzer, a tool for parsing syslog and Windows Event Logs. It supports RFC 3164 and RFC 5424 syslog formats, as well as Windows EVTX and XML event log files.
+This project implements the CrossLog Analyzer, a tool for parsing syslog and Windows Event Logs. It supports auditd, journalctl exported JSON, RFC 3164 and RFC 5424 syslog formats, as well as Windows EVTX and XML event log files.
 
 Install the required packages:
 pip install -r requirements.txt
