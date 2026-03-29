@@ -12,8 +12,10 @@ pip install -r requirements.txt
 ```text
 To print the help menu: 
 
-python crosslog.py --help
-  usage: crosslog [-h] [--format {auto,rfc3164,rfc5424,evtx,xml}] [--recursive] [--fail-fast] [--mode {summary,full}] [--summary-out SUMMARY_OUT] [--findings-csv FINDINGS_CSV] inputs [inputs ...]
+python.exe crosslog.py --help
+usage: crosslog [-h] [--format {auto,rfc3164,rfc5424,evtx,xml,auditd,journal}] [--recursive] [--fail-fast] [--mode {summary,full}]
+[--summary-out SUMMARY_OUT] [--findings-csv FINDINGS_CSV] [--min-severity {critical,high,medium,low,info}]
+                inputs [inputs ...]
 
 Cross Platfrom log analyzer program for detecting cybersecurity events from user provided log files.
 
@@ -22,7 +24,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --format {auto,rfc3164,rfc5424,evtx,xml}
+  --format {auto,rfc3164,rfc5424,evtx,xml,auditd,journal}
                         Force a parser format, or use the default auto-detect.
   --recursive           Recursively search directories for log files.
   --fail-fast           Stop processing if an exception is detected.
@@ -32,7 +34,8 @@ options:
                         Write the report summary to a text file.
   --findings-csv FINDINGS_CSV
                         Write the findings to a CSV file.
-
+  --min-severity {critical,high,medium,low,info}
+                        Only report findings at or above this severity level (default: info).
 To parse a single file:
 
 python crosslog.py sample.xml
