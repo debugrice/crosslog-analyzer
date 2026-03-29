@@ -68,7 +68,15 @@ def build_argparser() -> argparse.ArgumentParser:
         type=Path,
         help="Write the findings to a CSV file."
     )
-    
+    # Only report findings at or above this severity level.
+    p.add_argument(
+        "--min-severity",
+        choices=["critical", "high", "medium", "low", "info"],
+        default="info",
+        dest="min_severity",
+        help="Only report findings at or above this severity level (default: info).",
+    )
+
     return p
 
 def validate_inputs(raw_inputs: List[str]) -> List[Path]:
@@ -127,6 +135,7 @@ def main() -> int:
         report_mode=args.mode,
         summary_output_path=args.summary_out,
         findings_csv_path=args.findings_csv,
+        min_severity=args.min_severity,
     )
      
     try:

@@ -49,5 +49,14 @@ def write_summary_report(result: RunResult, output_path: Path) -> None:
         for category, count in sorted(category_counts.items()):
             lines.append(f"  {category:<15} {count}")
 
+        tactic_counts = Counter(
+            (finding.mitre_tactic_id or "none", finding.mitre_tactic_name or "unclassified")
+            for finding in result.findings
+        )
+        lines.append("")
+        lines.append("Findings by MITRE tactic:")
+        for (tactic_id, tactic_name), count in sorted(tactic_counts.items()):
+            lines.append(f"  {tactic_id:<8} {tactic_name:<25} {count}")
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")

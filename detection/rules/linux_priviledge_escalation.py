@@ -48,8 +48,10 @@ def detect_privilege_escalation(event: Event) -> Finding | None:
         event_type="privilege_escalation",
         message=f"User {uid} escalated privileges to {euid}: {command_line or program}",
         fields=dict(event.fields),
+        mitre_tactic_id="TA0004",
+        mitre_tactic_name="Privilege Escalation",
     )
-    
+
 RULES = [
     detect_privilege_escalation,
 ]

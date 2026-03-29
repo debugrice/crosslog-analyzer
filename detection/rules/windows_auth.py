@@ -2,7 +2,7 @@
 from models.finding import Finding
 
 def detect_windows_logon_success(event):
-    """Function used to detect a successful Windows logon. 
+    """Function used to detect a successful Windows logon.
 
      Args:
         event (ParsedEvent): Normalized event message.
@@ -24,6 +24,8 @@ def detect_windows_logon_success(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0001",
+        mitre_tactic_name="Initial Access",
     )
 
 def detect_windows_logon_failure(event):
@@ -49,6 +51,8 @@ def detect_windows_logon_failure(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0006",
+        mitre_tactic_name="Credential Access",
     )
 
 def detect_windows_kerberos_pre_auth_failure(event):
@@ -73,8 +77,10 @@ def detect_windows_kerberos_pre_auth_failure(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0006",
+        mitre_tactic_name="Credential Access",
     )
-    
+
 def detect_windows_account_lockout(event):
     """Function to detect a Windows account lockout.
 
@@ -97,6 +103,8 @@ def detect_windows_account_lockout(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0006",
+        mitre_tactic_name="Credential Access",
     )
 
 def detect_windows_priviledge_logon(event):
@@ -121,6 +129,8 @@ def detect_windows_priviledge_logon(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0004",
+        mitre_tactic_name="Privilege Escalation",
     )
 
 # List of rules used to detect Windows authentication events

@@ -55,6 +55,7 @@ def analyze():
     uploaded_files = request.files.getlist("logfiles")
     input_format   = request.form.get("format", "auto")
     fail_fast      = request.form.get("fail_fast") == "on"
+    min_severity   = request.form.get("min_severity", "info")
 
     # Reject the request early if no files were included in the form submission.
     if not uploaded_files or all(f.filename == "" for f in uploaded_files):
@@ -75,6 +76,7 @@ def analyze():
             input_paths=saved_paths,
             input_format=input_format,
             fail_fast=fail_fast,
+            min_severity=min_severity,
         )
 
         # Filter saved paths to only those with extensions the pipeline supports.
@@ -100,6 +102,14 @@ def analyze():
         severity_order = ["critical", "high", "medium", "low", "info", "unknown"]
         severity_rows  = [(s, severity_counts.get(s, 0)) for s in severity_order if severity_counts.get(s, 0)]
         category_rows  = sorted(category_counts.items())
+
+        # Aggregate findings by MITRE tactic, keyed as (tactic_id, tactic_name) pairs.
+        mitre_tactic_counts = Counter(
+            (f.mitre_tactic_id or "", f.mitre_tactic_name or "")
+            for f in result.findings
+            if f.mitre_tactic_id
+        )
+        mitre_tactic_rows = sorted(mitre_tactic_counts.items())
 
         # Build per-file summary rows for the Files Processed and Events Parsed stat card drawers.
         events_by_source   = Counter(e.source for e in result.normalized_events)
@@ -129,6 +139,7 @@ def analyze():
             result=result,
             severity_rows=severity_rows,
             category_rows=category_rows,
+            mitre_tactic_rows=mitre_tactic_rows,
             file_rows=file_rows,
             error_breakdown=error_breakdown,
         )

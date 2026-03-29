@@ -1,7 +1,7 @@
 from models.finding import Finding
 
 def detect_windows_user_account_creation(event):
-    """Function used to detect a Windows user account was created. 
+    """Function used to detect a Windows user account was created.
 
      Args:
         event (ParsedEvent): Normalized event message.
@@ -23,10 +23,12 @@ def detect_windows_user_account_creation(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0003",
+        mitre_tactic_name="Persistence",
     )
-    
+
 def detect_windows_user_account_deleted(event):
-    """Function used to detect a Windows user account was deleted. 
+    """Function used to detect a Windows user account was deleted.
 
      Args:
         event (ParsedEvent): Normalized event message.
@@ -48,10 +50,12 @@ def detect_windows_user_account_deleted(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0040",
+        mitre_tactic_name="Impact",
     )
 
 def detect_windows_user_password_change(event):
-    """Function used to detect a Windows user password change attempt. 
+    """Function used to detect a Windows user password change attempt.
 
      Args:
         event (ParsedEvent): Normalized event message.
@@ -73,10 +77,12 @@ def detect_windows_user_password_change(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0003",
+        mitre_tactic_name="Persistence",
     )
-    
+
 def detect_windows_user_group_membership_change(event):
-    """Function used to detect a Windows user group membership change. 
+    """Function used to detect a Windows user group membership change.
 
      Args:
         event (ParsedEvent): Normalized event message.
@@ -98,6 +104,8 @@ def detect_windows_user_group_membership_change(event):
         event_type=event.event_type,
         message=event.message,
         fields=dict(event.fields),
+        mitre_tactic_id="TA0003",
+        mitre_tactic_name="Persistence",
     )
 
 RULES = [

@@ -1,0 +1,79 @@
+<Events>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" Guid="{54849625-5478-4994-A5BA-3E3B0328C30D}"/>
+      <EventID>4697</EventID>
+      <Version>0</Version>
+      <Level>0</Level>
+      <Task>12292</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8020000000000000</Keywords>
+      <TimeCreated SystemTime="2026-03-10T08:00:00.000000000Z"/>
+      <EventRecordID>200001</EventRecordID>
+      <Correlation/>
+      <Execution ProcessID="520" ThreadID="600"/>
+      <Channel>Security</Channel>
+      <Computer>WIN-SRV01.corp.local</Computer>
+      <Security/>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-18</Data>
+      <Data Name="SubjectUserName">SYSTEM</Data>
+      <Data Name="SubjectDomainName">NT AUTHORITY</Data>
+      <Data Name="SubjectLogonId">0x3e7</Data>
+      <Data Name="ServiceName">EvilSvc</Data>
+      <Data Name="ServiceType">0x10</Data>
+      <Data Name="ServiceStartType">2</Data>
+      <Data Name="ServiceAccount">LocalSystem</Data>
+      <Data Name="ServiceFileName">C:\Windows\Temp\evil.exe</Data>
+    </EventData>
+  </Event>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Service Control Manager" Guid="{555908d1-a6d7-4695-8e1e-26931d2012f4}"/>
+      <EventID>7036</EventID>
+      <Version>0</Version>
+      <Level>4</Level>
+      <Task>0</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8080000000000000</Keywords>
+      <TimeCreated SystemTime="2026-03-10T08:01:00.000000000Z"/>
+      <EventRecordID>200002</EventRecordID>
+      <Correlation/>
+      <Execution ProcessID="660" ThreadID="700"/>
+      <Channel>System</Channel>
+      <Computer>WIN-SRV01.corp.local</Computer>
+      <Security/>
+    </System>
+    <EventData>
+      <Data Name="param1">Windows Defender Antivirus Service</Data>
+      <Data Name="param2">stopped</Data>
+    </EventData>
+  </Event>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Service Control Manager" Guid="{555908d1-a6d7-4695-8e1e-26931d2012f4}"/>
+      <EventID>7046</EventID>
+      <Version>0</Version>
+      <Level>4</Level>
+      <Task>0</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8080000000000000</Keywords>
+      <TimeCreated SystemTime="2026-03-10T08:02:00.000000000Z"/>
+      <EventRecordID>200003</EventRecordID>
+      <Correlation/>
+      <Execution ProcessID="660" ThreadID="700"/>
+      <Channel>System</Channel>
+      <Computer>WIN-SRV01.corp.local</Computer>
+      <Security/>
+    </System>
+    <EventData>
+      <Data Name="param1">kernel driver</Data>
+      <Data Name="param2">EvilDriver</Data>
+    </EventData>
+  </Event>
+
+</Events>

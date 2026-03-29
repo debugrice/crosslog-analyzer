@@ -5,4 +5,9 @@ Feb 18 12:21:32 myserver su[3484]: pam_unix(su:session): session open for user r
 Mar 04 10:20:15 blackhat sshd[12345]: pam_faillock(sshd:auth): user carter is locked out for 1800 seconds
 Mar 04 10:20:15 blackhat sshd[12345]: pam_faillock(sshd:auth): user carter is locked out from 192.168.1.100
 Mar 04 10:20:17 blackhat sshd[12345]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.1.100 user=carter
-
+Mar 29 10:00:01 prod-server useradd[1600]: new user: name=svcaccount, UID=1002, GID=1002, home=/home/svcaccount, shell=/bin/bash
+Mar 29 10:01:05 prod-server userdel[1601]: delete user 'tempuser'
+Mar 29 10:02:10 prod-server passwd[1602]: pam_unix(passwd:chauthtok): password changed for alice
+Mar 29 10:03:15 prod-server usermod[1603]: add 'alice' to group 'docker'
+Mar 29 10:04:20 prod-server groupadd[1604]: new group: name=devteam, GID=1003
+Mar 29 10:05:30 prod-server groupdel[1605]: delete group 'oldteam'
