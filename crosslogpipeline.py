@@ -1,6 +1,8 @@
 
 from parsers.auto_detect import get_parser_for_file
 from config import CrossLogPipelineConfig
+
+_SEVERITY_RANK = {"critical": 4, "high": 3, "medium": 2, "low": 1, "info": 0}
 from models.run_result import RunResult
 from models.parsed_event import ParsedEvent, ParserErrorEvent
 from normalizer.normalize import normalize_event
@@ -112,6 +114,8 @@ class CrossLogPipeline:
                 finding = detect(event)
                 # If not None, then add it to the results findings
                 if finding:
+                    threshold = _SEVERITY_RANK.get(self.config.min_severity, 0)
+                    finding = [f for f in finding if _SEVERITY_RANK.get(f.severity, 0) >= threshold]
                     result.findings.extend(finding)
             except Exception as exc:
                 result.add_detection_error(
@@ -136,6 +140,8 @@ class CrossLogPipeline:
 
                     finding = detect(event)
                     if finding:
+                        threshold = _SEVERITY_RANK.get(self.config.min_severity, 0)
+                        finding = [f for f in finding if _SEVERITY_RANK.get(f.severity, 0) >= threshold]
                         result.findings.extend(finding)
 
             except Exception as exc:

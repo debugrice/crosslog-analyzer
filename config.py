@@ -14,3 +14,4 @@ class CrossLogPipelineConfig:
     fail_fast: bool = False
     summary_output_path: Optional[Path] = None
     findings_csv_path: Optional[Path] = None
+    min_severity: str = "info"

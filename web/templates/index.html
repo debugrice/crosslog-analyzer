@@ -42,6 +42,18 @@
       </select>
     </div>
 
+    <!-- Minimum severity: findings below this level are excluded from results -->
+    <div class="form-group">
+      <label for="min_severity">Minimum Severity</label>
+      <select id="min_severity" name="min_severity">
+        <option value="info">Info — show all findings</option>
+        <option value="low">Low and above</option>
+        <option value="medium">Medium and above</option>
+        <option value="high">High and above</option>
+        <option value="critical">Critical only</option>
+      </select>
+    </div>
+
     <!-- Fail-fast toggle: stops the pipeline on the first error encountered -->
     <div class="form-group form-check">
       <input type="checkbox" id="fail_fast" name="fail_fast" />

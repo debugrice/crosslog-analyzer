@@ -55,6 +55,7 @@ def analyze():
     uploaded_files = request.files.getlist("logfiles")
     input_format   = request.form.get("format", "auto")
     fail_fast      = request.form.get("fail_fast") == "on"
+    min_severity   = request.form.get("min_severity", "info")
 
     # Reject the request early if no files were included in the form submission.
     if not uploaded_files or all(f.filename == "" for f in uploaded_files):
@@ -75,6 +76,7 @@ def analyze():
             input_paths=saved_paths,
             input_format=input_format,
             fail_fast=fail_fast,
+            min_severity=min_severity,
         )
 
         # Filter saved paths to only those with extensions the pipeline supports.
