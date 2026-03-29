@@ -125,7 +125,7 @@ def determine_category(parsed_event) -> str | None:
 
     if parsed_event.parser_type in {"evtx", "windows_xml"}:
         # TODO More categories will need to be added.
-        if parsed_event.event_id in {4624, 4625, 4634, 4648, 4672, 4740, 4771}:
+        if parsed_event.event_id in {4624, 4625, 4634, 4648, 4672, 4740, 4768, 4771}:
             return "authentication"
         if parsed_event.event_id in {5156, 5157}:
             return "network"
@@ -152,6 +152,7 @@ def determine_event_type(parsed_event) -> str | None:
             4634: "logoff",
             4672: "special_privileges_assigned",
             4740: "account_lockout",
+            4768: "kerberos_account_logon",
             4771: "kerberos_pre_authentication_failed",
             5156: "fw_connection_allowed",
             5157: "fw_connection_blocked",
