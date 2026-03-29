@@ -23,3 +23,10 @@ type=PROCTITLE msg=audit(1710874001.321:500): proctitle=636174002F6574632F706173
 type=SYSCALL msg=audit(1710874100.111:501): arch=c000003e syscall=59 success=yes pid=4100 uid=1001 euid=0 comm="sudo" exe="/usr/bin/sudo"
 type=EXECVE msg=audit(1710874100.111:501): argc=2 a0="sudo" a1="cat /etc/shadow"
 type=PROCTITLE msg=audit(1710874100.111:501): proctitle=7375646F00636174202F6574632F736861646F77
+
+type=ADD_USER msg=audit(1711720800.001:200): pid=1500 uid=0 auid=1000 ses=5 msg='op=adding user acct="devops" exe="/usr/sbin/useradd" hostname=prod-server addr=? terminal=pts/1 res=success'
+type=DEL_USER msg=audit(1711720801.002:201): pid=1501 uid=0 auid=1000 ses=5 msg='op=delete user acct="tempuser" exe="/usr/sbin/userdel" hostname=prod-server addr=? terminal=pts/1 res=success'
+type=USER_CHAUTHTOK msg=audit(1711720802.003:202): pid=1502 uid=0 auid=1000 ses=5 msg='op=change password acct="alice" exe="/usr/bin/passwd" hostname=prod-server addr=? terminal=pts/1 res=success'
+type=ADD_GROUP msg=audit(1711720803.004:203): pid=1503 uid=0 auid=1000 ses=5 msg='op=adding group acct="devteam" exe="/usr/sbin/groupadd" hostname=prod-server addr=? terminal=pts/1 res=success'
+type=ADD_GROUP msg=audit(1711720804.005:204): pid=1504 uid=0 auid=1000 ses=5 msg='op=adding member to group acct="sudo" exe="/usr/sbin/usermod" hostname=prod-server addr=? terminal=pts/1 res=success'
+type=DEL_GROUP msg=audit(1711720805.006:205): pid=1505 uid=0 auid=1000 ses=5 msg='op=delete group acct="oldteam" exe="/usr/sbin/groupdel" hostname=prod-server addr=? terminal=pts/1 res=success'
