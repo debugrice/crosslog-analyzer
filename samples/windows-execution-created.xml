@@ -1,0 +1,30 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Microsoft-Windows-Security-Auditing" />
+    <EventID>4688</EventID>
+    <Level>0</Level>
+    <TimeCreated SystemTime="2026-03-29T22:14:35.123456Z" />
+    <Computer>HOST01.corp.local</Computer>
+  </System>
+  <EventData>
+    <Data Name="SubjectUserSid">S-1-5-18</Data>
+    <Data Name="SubjectUserName">SYSTEM</Data>
+    <Data Name="SubjectDomainName">NT AUTHORITY</Data>
+    <Data Name="SubjectLogonId">0x3e7</Data>
+
+    <Data Name="NewProcessId">0x4f0</Data>
+    <Data Name="NewProcessName">C:\Windows\System32\cmd.exe</Data>
+
+    <Data Name="TokenElevationType">%%1936</Data>
+    <Data Name="ProcessId">0x3b4</Data>
+    <Data Name="CommandLine">cmd.exe /c whoami</Data>
+
+    <Data Name="TargetUserSid">S-1-0-0</Data>
+    <Data Name="TargetUserName">-</Data>
+    <Data Name="TargetDomainName">-</Data>
+    <Data Name="TargetLogonId">0x0</Data>
+
+    <Data Name="ParentProcessName">C:\Windows\System32\services.exe</Data>
+    <Data Name="MandatoryLabel">S-1-16-16384</Data>
+  </EventData>
+</Event>

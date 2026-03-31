@@ -1,0 +1,7 @@
+type=SYSCALL msg=audit(1710873452.123:420): arch=c000003e syscall=59 success=yes exit=0 a0=55b3c2e8f2a0 a1=55b3c2e8f300 a2=55b3c2e8f340 a3=7ffc12345678 items=2 ppid=2456 pid=2480 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=pts0 ses=3 comm="bash" exe="/usr/bin/bash" key="exec"
+type=EXECVE msg=audit(1710873452.123:420): argc=3 a0="bash" a1="-c" a2="whoami"
+type=CWD msg=audit(1710873452.123:420): cwd="/home/user"
+type=PATH msg=audit(1710873452.123:420): item=0 name="/usr/bin/bash" inode=123456 dev=08:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL
+type=PATH msg=audit(1710873452.123:420): item=1 name="/lib64/ld-linux-x86-64.so.2" inode=654321 dev=08:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL
+type=PROCTITLE msg=audit(1710873452.123:420): proctitle=62617368002D630077686F616D69
+type=SYSCALL msg=audit(1710873600.111:423): arch=c000003e syscall=231 success=no exit=-11 ppid=2456 pid=2480 comm="bash" exe="/usr/bin/bash"
