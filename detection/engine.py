@@ -7,6 +7,7 @@ from detection.rules.windows_iam import RULES as WINDOWS_IAM_RULES
 from detection.rules.windows_service import RULES as WINDOWS_SERVICE_RULES
 from detection.rules.process_execution_events import RULES as LINUX_AUDITD
 from detection.rules.linux_priviledge_escalation import RULES as LINUX_PRIV
+from detection.rules.windows_execution import RULES as WIN_EXE
 
 # List of rules to process
 # TODO Add more rules to this section.
@@ -19,6 +20,7 @@ RULES = (
     + WINDOWS_SERVICE_RULES
     + LINUX_AUDITD
     + LINUX_PRIV
+    + WIN_EXE
 )
 
 def detect(event):

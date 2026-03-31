@@ -127,6 +127,10 @@ def determine_category(parsed_event) -> str | None:
         # TODO More categories will need to be added.
         if parsed_event.event_id in {4624, 4625, 4634, 4648, 4672, 4740, 4768, 4771}:
             return "authentication"
+        if parsed_event.event_id in { 4720, 4723, 4726, 4732, 4794 }:
+            return "account_management"
+        if parsed_event.event_id in { 4688, 4689 }:
+            return "process_execution"
         if parsed_event.event_id in {5156, 5157}:
             return "network"
         if parsed_event.event_id in {6005, 6006, 6008, 1074, 41}:
@@ -150,10 +154,17 @@ def determine_event_type(parsed_event) -> str | None:
             4624: "logon_success",
             4625: "logon_failure",
             4634: "logoff",
+            4688: "process_creation",
+            4689: "process_terminated",
             4672: "special_privileges_assigned",
+            4720: "user_created",
+            4723: "password_changed",
+            4726: "user_deleted",
+            4732: "group_membership_changed",
             4740: "account_lockout",
             4768: "kerberos_account_logon",
             4771: "kerberos_pre_authentication_failed",
+            4794: "user_account_management",
             5156: "fw_connection_allowed",
             5157: "fw_connection_blocked",
             6005: "eventlog_started",
