@@ -133,6 +133,48 @@ def detect_windows_priviledge_logon(event):
         mitre_tactic_name="Privilege Escalation",
     )
 
+def detect_dsrm_password_set(event) -> Finding | None:
+    """Detect attempts to set Directory Services Restore Mode (DSRM) password (Event ID 4794)."""
+
+    # Must be Windows event log
+    if event.parser_type not in {"evtx", "windows_xml"}:
+        return None
+
+    # Must match Event ID 4794
+    if str(event.event_id) != "4794":
+        return None
+
+    subject_user = event.fields.get("SubjectUserName")
+    subject_domain = event.fields.get("SubjectDomainName")
+    logon_id = event.fields.get("SubjectLogonId")
+
+    user_display = f"{subject_domain}\\{subject_user}" if subject_domain and subject_user else subject_user or "unknown"
+
+    severity = "high"
+    event_type = "dsrm_password_set"
+
+    message = f'DSRM password set/reset attempt by {user_display}'
+
+    return Finding(
+        rule_id="WIN-4794-DSRM-PASSWORD-SET",
+        title="DSRM password modification detected",
+        severity=severity,
+        category="account_management",
+        source=event.source,
+        timestamp=event.timestamp,
+        host=event.host,
+        event_type=event_type,
+        message=message,
+        fields={
+            **dict(event.fields),
+            "subject_user": subject_user,
+            "subject_domain": subject_domain,
+            "logon_id": logon_id,
+        },
+        mitre_tactic_id="TA0003",
+        mitre_tactic_name="Persistence",
+    )
+
 # List of rules used to detect Windows authentication events
 RULES = [
     detect_windows_logon_success,
@@ -140,4 +182,5 @@ RULES = [
     detect_windows_kerberos_pre_auth_failure,
     detect_windows_account_lockout,
     detect_windows_priviledge_logon,
+    detect_dsrm_password_set,
 ]
