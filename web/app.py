@@ -11,14 +11,13 @@ import shutil
 from pathlib import Path
 from collections import Counter, defaultdict
 from flask import Flask, render_template, request
+from werkzeug.utils import secure_filename
 
 # Insert the project root into sys.path so that pipeline modules are
 # importable when the application is launched from the web/ subdirectory.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from config import CrossLogPipelineConfig
-from crosslogpipeline import CrossLogPipeline
-from ingest.file_loader import discover_input_files
+from services.pipeline_service import run_pipeline
 
 app = Flask(__name__)
 
@@ -68,28 +67,18 @@ def analyze():
         saved_paths = []
         for upload in uploaded_files:
             if upload.filename:
-                dest = tmp_dir / upload.filename
+                dest = tmp_dir / secure_filename(upload.filename)
                 upload.save(dest)
                 saved_paths.append(dest)
 
-        config = CrossLogPipelineConfig(
+        # Calls the service function for executing the pipeline
+        result, files, config = run_pipeline(
             input_paths=saved_paths,
             input_format=input_format,
+            recursive=False,
             fail_fast=fail_fast,
             min_severity=min_severity,
         )
-
-        # Filter saved paths to only those with extensions the pipeline supports.
-        files = discover_input_files(saved_paths, recursive=False)
-        if not files:
-            return render_template(
-                "index.html",
-                error="No supported log files found in the upload (supported: .log, .txt, .evtx, .xml)."
-            )
-
-        # Execute the full parse → normalize → detect pipeline.
-        pipeline = CrossLogPipeline(config=config)
-        result   = pipeline.run(files=files)
 
         # Aggregate findings by severity using the standard display priority order.
         severity_counts = Counter(
@@ -152,4 +141,4 @@ def analyze():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=False)

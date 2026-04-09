@@ -1,15 +1,15 @@
 
 import argparse
 import sys
+
 from pathlib import Path
-from typing import Iterable, List
-from config import CrossLogPipelineConfig
-from crosslogpipeline import CrossLogPipeline
-from ingest.file_loader import discover_input_files
-from models.run_result import RunResult
+from typing import List
+
 from output.console import print_report
 from output.text_report import write_summary_report
 from output.findings_csv_report import write_findings_csv
+from services.pipeline_service import run_pipeline
+from web.app import app
 
 def build_argparser() -> argparse.ArgumentParser:
     """"
@@ -46,7 +46,7 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument(
         "--fail-fast",
         default=False,
-        action="store_false",
+        action="store_true",
         help="Stop processing if an exception is detected."
     )
     # This option is for print the console report. Options are summary or full.
@@ -75,6 +75,32 @@ def build_argparser() -> argparse.ArgumentParser:
         default="info",
         dest="min_severity",
         help="Only report findings at or above this severity level (default: info).",
+    )
+    # Added to launch the flask api as an option
+    p.add_argument(
+        "--web",
+        action="store_true",
+        help="Start the web interface instead of command-line mode."
+    )
+    # Identify the network interface for the flask api
+    p.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="Web host address. Default=127.0.0.1"
+    )
+    # Identify the TCP port to bind toeh flask api to
+    p.add_argument(
+        "--port",
+        type=int,
+        default=5000,
+        help="Web port. Default=5000"
+    )
+    # Debug option for the flask api
+    p.add_argument(
+        "--debug",
+        default=False,
+        action="store_true",
+        help="Enable Flask debug mode."
     )
 
     return p
@@ -105,6 +131,22 @@ def validate_inputs(raw_inputs: List[str]) -> List[Path]:
         sys.exit(1)
     
     return paths
+
+def run_web(host: str, port: int, debug: bool) -> int:
+    """Function used to launch the flask api.
+
+    Args:
+        host (str): Host IP address or network interface to use
+        port (int): TCP port to bind the flask api
+        debug (bool): Debug mode option for the flask api
+
+    Returns:
+        int: Exit integer value
+    """
+    
+    app.run(host=host, port=port, debug=debug)
+    
+    return 0  
    
 def main() -> int:
     """Main function for processing the log files. 
@@ -119,62 +161,56 @@ def main() -> int:
     args_parser = build_argparser()
     args        = args_parser.parse_args(sys.argv)
     
-    # If the user fails to provide the necessary input stop the application.
-    if len(sys.argv) == 1:
-        args_parser.print_help()
-        return 1
-    # Get the user provided input data file paths.
-    input_paths = validate_inputs(args.inputs)
-    
-    # Initalize the configuration data class object.
-    config = CrossLogPipelineConfig(
-        input_paths=input_paths,
-        input_format=args.format,
-        recursive=args.recursive,
-        fail_fast=args.fail_fast,
-        report_mode=args.mode,
-        summary_output_path=args.summary_out,
-        findings_csv_path=args.findings_csv,
-        min_severity=args.min_severity,
-    )
-     
     try:
-        # Identify the the files that must be added to the pipeline, 
-        files = discover_input_files(
-            input_paths,
-            recursive=args.recursive
+        
+        # Check if the user wishes to run the flask api
+        if args.web:
+            return run_web(args.host, args.port, args.debug)
+        
+        # If CLI, the user must provide input
+        if not args.inputs:
+                args_parser.print_help()
+                return 1
+
+        # Files that were discovered by the user input
+        input_paths = validate_inputs(args.inputs)
+
+        # Pipeline call to process all the files
+        results, files, config = run_pipeline(
+            input_paths=input_paths,
+            input_format=args.format,
+            recursive=args.recursive,
+            fail_fast=args.fail_fast,
+            report_mode=args.mode,
+            summary_output_path=args.summary_out,
+            findings_csv_path=args.findings_csv,
+            min_severity=args.min_severity,
         )
-        # Stop the application if we don't have any input.
-        if not files:
-            print("[ERROR]: No Input log files found.", file=sys.stderr)
-            return 1
-        
-        # Build the pipeline
-        pipeline = CrossLogPipeline(config=config)
-        
-        # Results from the pipeline
-        results = pipeline.run(files=files)
-        
-        # Display the report summary or full to the user
+
+        # Console output of the results
         print_report(results, report_mode=config.report_mode)
-        
-        # If user selected, print the summary to a file 
+
+        # Check to write the summary report
         if config.summary_output_path:
-            write_summary_report(result=results,
-                                 output_path=config.summary_output_path)
-        # If user selected, print a CSV file
+            write_summary_report(
+                result=results,
+                output_path=config.summary_output_path
+            )
+        # Check to write the CSV file
         if config.findings_csv_path:
-            write_findings_csv(result=results,
-                               output_path=config.findings_csv_path)
-        
+            write_findings_csv(
+                result=results,
+                output_path=config.findings_csv_path
+            )
+
         return 0
-    
+
     except KeyboardInterrupt:
-        print("Program interrupted by user. ")
+        print("Program interrupted by user.")
         return 130
     except Exception as exc:
         print(f"[FATAL] {exc}", file=sys.stderr)
-        return -1
+    return 1
 
 if __name__ == "__main__":
     sys.exit(main())
