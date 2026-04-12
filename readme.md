@@ -12,9 +12,10 @@ pip install -r requirements.txt
 ```text
 To print the help menu: 
 
-python.exe crosslog.py --help
-usage: crosslog [-h] [--format {auto,rfc3164,rfc5424,evtx,xml,auditd,journal}] [--recursive] [--fail-fast] [--mode {summary,full}]
-[--summary-out SUMMARY_OUT] [--findings-csv FINDINGS_CSV] [--min-severity {critical,high,medium,low,info}]
+$ python crosslog.py --help
+usage: crosslog [-h] [--format {auto,rfc3164,rfc5424,evtx,xml,auditd,journal}] [--recursive] [--fail-fast]
+                [--mode {summary,full}] [--summary-out SUMMARY_OUT] [--findings-csv FINDINGS_CSV]
+                [--min-severity {critical,high,medium,low,info}] [--web] [--host HOST] [--port PORT] [--debug]
                 inputs [inputs ...]
 
 Cross Platfrom log analyzer program for detecting cybersecurity events from user provided log files.
@@ -36,6 +37,10 @@ options:
                         Write the findings to a CSV file.
   --min-severity {critical,high,medium,low,info}
                         Only report findings at or above this severity level (default: info).
+  --web                 Start the web interface instead of command-line mode.
+  --host HOST           Web host address. Default=127.0.0.1
+  --port PORT           Web port. Default=5000
+  --debug               Enable Flask debug mode.
 To parse a single file:
 
 python crosslog.py sample.xml
