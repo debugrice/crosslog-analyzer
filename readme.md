@@ -10,7 +10,7 @@ Install the required packages:
 pip install -r requirements.txt
 
 ```text
-To print the help menu: 
+# To print the help menu: 
 
 $ python crosslog.py --help
 usage: crosslog [-h] [--format {auto,rfc3164,rfc5424,evtx,xml,auditd,journal}] [--recursive] [--fail-fast]
@@ -41,18 +41,19 @@ options:
   --host HOST           Web host address. Default=127.0.0.1
   --port PORT           Web port. Default=5000
   --debug               Enable Flask debug mode.
-To parse a single file:
 
-python crosslog.py sample.xml
+# To parse a single file:
+$ python crosslog.py sample.xml
 
-To parse multiple files:
+# To parse multiple files:
+$ python crosslog.py sample-1.xml sample-2.xml sample-3.xml
 
-python crosslog.py sample-1.xml sample-2.xml sample-3.xml
+# To parse a single directory:
+$ python crosslog.py sub_directory_1
 
-To parse a single directory:
+# To parse a single directory recursively:
+$ python crosslog.py sub_directory_1 --recursive
 
-python crosslog.py sub_directory_1
+# To launch the web application
+$ python crosslog.py --web
 
-To parse a single directory recursively:
-
-python crosslog.py sub_directory_1 --recursive
